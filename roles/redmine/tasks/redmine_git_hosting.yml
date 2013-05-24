@@ -26,28 +26,30 @@
   copy: src={{ gitolite_admin_keyfile }} dest=~/.ssh/redmine_gitolite_admin_id_rsa mode=0600
 
 - name: clone plugin repository
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest=$redmine_dir/plugins/redmine_git_hosting
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ redmine_dir }}/plugins/redmine_git_hosting
 
 - name: run bundle install 
-  command: chdir=$redmine_dir bundle install
+  command: chdir={{ redmine_dir }} bundle install
 
 - name: add http servername to redmine_git_hosting configuration
-  lineinfile: dest=$redmine_dir/plugins/redmine_git_hosting/init.rb
+  lineinfile: dest={{ redmine_dir }}/plugins/redmine_git_hosting/init.rb
     line="      'httpServer'                    => '{{ ansible_fqdn }}',"
     regexp="^\s*'httpServer'"
     state=present
 
 - name: add git servername to redmine_git_hosting configuration
-  lineinfile: dest=$redmine_dir/plugins/redmine_git_hosting/init.rb
+  lineinfile: dest={{ redmine_dir }}/plugins/redmine_git_hosting/init.rb
     line="      'gitServer'                     => '{{ ansible_fqdn }}',"
     regexp="^\s*'gitServer'"
     state=present
 
 - name: load default settings for plugin
-  command: chdir=$redmine_dir bundle exec rake redmine_git_hosting:restore_defaults RAILS_ENV=production
+  command: chdir={{ redmine_dir }} 
+    bundle exec rake redmine_git_hosting:restore_defaults RAILS_ENV=production
 
 - name: migrate database for plugins
-  command: chdir=$redmine_dir bundle exec rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
+  command: chdir={{ redmine_dir }} 
+    bundle exec rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
   notify:
     - restart nginx
 

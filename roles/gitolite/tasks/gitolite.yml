@@ -2,7 +2,7 @@
 # install gitolite (tasks executed as root)
 
 - name: clone gitolite repo
-  git: repo=git://github.com/sitaramc/gitolite dest=$gitolite_dir 
+  git: repo=git://github.com/sitaramc/gitolite dest={{ gitolite_dir }}
   sudo: yes
   sudo_user: git
 
@@ -10,7 +10,7 @@
   file: path=~/bin state=directory owner=git group=git
 
 - name: install gitolite
-  shell: $gitolite_dir/install -to ~/bin
+  shell: {{ gitolite_dir }}/install -to ~/bin
   sudo: yes
   sudo_user: git
 
