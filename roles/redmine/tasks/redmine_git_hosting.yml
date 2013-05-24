@@ -2,7 +2,7 @@
 # install redmine_git_hosting plugin
 
 - name: install system ruby for redmine_git_hosting plugin hook
-  apt: pkg=ruby state=latest
+  apt: pkg=ruby state=present
   sudo: yes
 
 - name: setup sudoers for redmine -> git

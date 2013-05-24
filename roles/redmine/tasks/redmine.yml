@@ -2,7 +2,7 @@
 # These tasks installs redmine
 
 - name: install imagemagick for redmine
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} state=present
   sudo: yes
   with_items:
     - imagemagick

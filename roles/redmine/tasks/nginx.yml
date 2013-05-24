@@ -7,16 +7,16 @@
 #   - curl
 
 - name: install nginx-passenger prerequisites
-  apt: pkg={{ item }} state=latest
+  apt: pkg={{ item }} state=present
   sudo: yes
   with_items:
     - libcurl4-openssl-dev
 
 - name: install builder gem
-  gem: name=builder state=latest
+  gem: name=builder state=present
 
 - name: install passenger gem
-  gem: name=passenger state=latest
+  gem: name=passenger state=present
 
 - name: get installed ruby version
   shell: rvm current

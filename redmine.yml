@@ -25,5 +25,12 @@
     - secret_passwords.yml
   roles:
     - redmine
+  post_tasks:
+    - name: remove passwordless sudo from redmine_adm
+      lineinfile: "dest=/etc/sudoers regexp='^%redmine_adm' state=absent line='%redmine_adm     ALL = NOPASSWD: ALL'"
+      sudo: yes
+      tags:
+        - cleanup
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
