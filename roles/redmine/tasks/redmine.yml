@@ -1,0 +1,36 @@
+---
+# These tasks installs redmine
+
+- name: install imagemagick for redmine
+  apt: pkg={{ item }} state=latest
+  sudo: yes
+  with_items:
+    - imagemagick
+    - libmagickwand-dev
+
+- name: clone redmine repository
+  git: repo=git://github.com/redmine/redmine.git dest=$redmine_dir version=2.3-stable
+
+- name: create plugin assets directory
+  file: path=$redmine_dir/public/plugin_assets state=directory
+
+- name: create database config file
+  template: src=database.yml.j2 dest=$redmine_dir/config/database.yml
+
+- name: run redmine bundle install 
+  command: chdir=$redmine_dir bundle install --without test
+
+- name: generate secret rails token
+  command: chdir=$redmine_dir rake generate_secret_token
+
+- name: migrate database
+  command: chdir=$redmine_dir rake db:migrate RAILS_ENV=production
+
+- name: load default data
+  command: chdir=$redmine_dir rake redmine:load_default_data REDMINE_LANG=de RAILS_ENV=production
+  notify:
+    - restart nginx
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
+

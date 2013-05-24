@@ -1,0 +1,65 @@
+---
+# Installation von Nginx
+
+#- name: Install prerequisites for RVM
+#  apt: pkg={{ item }} state=present
+#  with_items:
+#   - curl
+
+- name: install nginx-passenger prerequisites
+  apt: pkg={{ item }} state=latest
+  sudo: yes
+  with_items:
+    - libcurl4-openssl-dev
+
+- name: install builder gem
+  gem: name=builder state=latest
+
+- name: install passenger gem
+  gem: name=passenger state=latest
+
+- name: get installed ruby version
+  shell: rvm current
+  register: rvm_current_out
+  tags:
+    - cf
+
+- name: get installed passenger version
+  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1
+  register: pv_out
+  tags:
+    - cf
+
+- set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.stdout }}
+  tags:
+    - cf
+
+- name: install nginx
+  shell: creates=/home/redmine/nginx/sbin/nginx   
+    ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
+    --auto-download --prefix=/home/redmine/nginx --auto
+
+- name: setup nginx configuration file
+  template: src=nginx.conf.j2 dest=/home/redmine/nginx/conf/nginx.conf
+  tags:
+    - cf
+
+- name: copy init script
+  copy: src=nginx dest=/etc/init.d/ owner=root group=root mode=0755
+  sudo: yes
+  tags:
+    - cf
+
+- name: run Nginx on boot
+  service: "name=nginx enabled=yes"
+  sudo: yes
+  tags:
+    - cf
+
+- name: start Nginx
+  service: "name=nginx state=started"
+  sudo: yes
+  tags:
+    - cf
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

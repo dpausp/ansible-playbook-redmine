@@ -1,0 +1,54 @@
+---
+# install redmine_git_hosting plugin
+
+- name: install system ruby for redmine_git_hosting plugin hook
+  apt: pkg=ruby state=latest
+  sudo: yes
+
+- name: setup sudoers for redmine -> git
+  lineinfile: dest=/etc/sudoers 
+    line='redmine   ALL=(git)      NOPASSWD:ALL' 
+    regexp=^redmine 
+    state=present
+  sudo: yes
+
+- name: setup sudoers for git -> redmine
+  lineinfile: dest=/etc/sudoers
+    line='git   ALL=(redmine)      NOPASSWD:ALL' 
+    regexp=^git 
+    state=present
+  sudo: yes
+
+- name: copy over public key for gitolite administration
+  copy: src={{ gitolite_admin_keyfile }}.pub dest=~/.ssh/redmine_gitolite_admin_id_rsa.pub
+
+- name: copy over private key for gitolite administration
+  copy: src={{ gitolite_admin_keyfile }} dest=~/.ssh/redmine_gitolite_admin_id_rsa mode=0600
+
+- name: clone plugin repository
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest=$redmine_dir/plugins/redmine_git_hosting
+
+- name: run bundle install 
+  command: chdir=$redmine_dir bundle install
+
+- name: add http servername to redmine_git_hosting configuration
+  lineinfile: dest=$redmine_dir/plugins/redmine_git_hosting/init.rb
+    line="      'httpServer'                    => '{{ ansible_fqdn }}',"
+    regexp="^\s*'httpServer'"
+    state=present
+
+- name: add git servername to redmine_git_hosting configuration
+  lineinfile: dest=$redmine_dir/plugins/redmine_git_hosting/init.rb
+    line="      'gitServer'                     => '{{ ansible_fqdn }}',"
+    regexp="^\s*'gitServer'"
+    state=present
+
+- name: load default settings for plugin
+  command: chdir=$redmine_dir bundle exec rake redmine_git_hosting:restore_defaults RAILS_ENV=production
+
+- name: migrate database for plugins
+  command: chdir=$redmine_dir bundle exec rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
+  notify:
+    - restart nginx
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

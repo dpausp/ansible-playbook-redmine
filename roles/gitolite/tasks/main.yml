@@ -1,0 +1,5 @@
+---
+- include: gitolite.yml
+- include: git-daemon.yml
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

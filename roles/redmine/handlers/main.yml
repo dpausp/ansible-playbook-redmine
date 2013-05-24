@@ -1,0 +1,9 @@
+---
+# Handler for the redmine server: handlers are called by other plays.
+# See http://ansible.cc/docs/playbooks.html for more information about handlers.
+
+- name: restart nginx
+  sudo: yes
+  service: name=nginx state=restarted
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

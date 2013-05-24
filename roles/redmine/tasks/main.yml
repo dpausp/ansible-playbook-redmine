@@ -1,0 +1,8 @@
+---
+
+- include: ruby.yml
+- include: nginx.yml
+- include: redmine.yml
+- include: redmine_git_hosting.yml
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

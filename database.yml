@@ -1,0 +1,10 @@
+---
+- name: deploy PostgreSQL
+  hosts: db
+  user: root
+  vars_files:
+    - secret_passwords.yml
+  roles:
+    - db
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

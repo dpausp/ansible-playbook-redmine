@@ -1,0 +1,19 @@
+---
+# install git-daemon (tasks executed as root)
+
+- name: install git-daemon-run package
+  apt: pkg=git-daemon-run state=present
+
+- name: create start script link
+  file: src=/usr/bin/sv path=/etc/init.d/git-daemon state=link
+
+- name: create run script
+  template: src=git-daemon-run.j2 dest=/etc/sv/git-daemon/run
+
+- name: add git-daemon as default service
+  service: name=git-daemon enabled=yes
+
+- name: start git-daemon service
+  service: name=git-daemon state=started
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

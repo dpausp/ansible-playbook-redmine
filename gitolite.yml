@@ -1,0 +1,18 @@
+---
+- name: git user
+  hosts: git_server
+  user: root
+  tasks:
+  - name: create git user
+    user: name=git shell=/bin/bash state=present
+
+  - name: prepare .ssh dir
+    file: path=/home/git/.ssh/ owner=git group=git state=directory
+
+- name: deploy gitolite
+  hosts: git_server
+  user: root
+  roles:
+    - gitolite
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

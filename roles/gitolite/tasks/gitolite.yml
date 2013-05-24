@@ -1,0 +1,25 @@
+---
+# install gitolite (tasks executed as root)
+
+- name: clone gitolite repo
+  git: repo=git://github.com/sitaramc/gitolite dest=$gitolite_dir 
+  sudo: yes
+  sudo_user: git
+
+- name: make bin dir
+  file: path=~/bin state=directory owner=git group=git
+
+- name: install gitolite
+  shell: $gitolite_dir/install -to ~/bin
+  sudo: yes
+  sudo_user: git
+
+- name: copy public gitolite admin key
+  copy: src={{ gitolite_admin_keyfile }}.pub dest=/dev/shm/gitolite_admin_key.pub owner=git group=git
+
+- name: gitolite setup
+  shell: ~/bin/gitolite setup -pk /dev/shm/gitolite_admin_key.pub
+  sudo: yes
+  sudo_user: git
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

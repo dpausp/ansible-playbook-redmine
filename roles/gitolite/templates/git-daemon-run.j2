@@ -1,0 +1,7 @@
+#!/bin/sh
+exec 2>&1
+echo 'git-daemon starting.'
+exec chpst -ugit \
+  "$(git --exec-path)"/git-daemon --verbose --reuseaddr \
+  --base-path=/home/git/repositories /home/git/repositories
+

@@ -1,0 +1,26 @@
+---
+# This playbook contains common plays that will be run on all nodes.
+
+- name: install ntp 
+  apt: pkg=ntp state=present
+  tags: ntp
+
+- name: configure ntp file
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  tags: ntp
+  notify: restart ntp
+
+- name: start the ntp service
+  service: name=ntp state=started enabled=true
+  tags: ntp
+
+- name: install mosh
+  apt: pkg=mosh state=present
+
+- name: install screen
+  apt: pkg=screen state=present
+
+- name: install git
+  apt: pkg=git state=latest
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

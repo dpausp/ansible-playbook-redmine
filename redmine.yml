@@ -1,0 +1,29 @@
+---
+- name: redmine user
+  hosts: redmine_server
+  user: root
+  tasks:
+  - name: create redmine_adm group
+    group: name=redmine_adm state=present
+
+  - name: create redmine user
+    user: name=redmine shell=/bin/bash groups=redmine_adm state=present
+
+  - name: prepare .ssh dir
+    file: path=/home/redmine/.ssh/ owner=redmine group=redmine state=directory
+
+  - name: set up SSH authorized key for redmine user
+    authorized_key: "user=redmine key='{{ lookup('file', user_redmine_pubkeyfile) }}' state=present"
+      
+  - name: give passwordless sudo to redmine_adm (will be reset later)
+    lineinfile: "dest=/etc/sudoers regexp='^%redmine_adm' state=present line='%redmine_adm     ALL = NOPASSWD: ALL'"
+
+- name: deploy Redmine
+  hosts: redmine_server
+  user: redmine
+  vars_files:
+    - secret_passwords.yml
+  roles:
+    - redmine
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

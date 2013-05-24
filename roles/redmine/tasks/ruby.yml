@@ -1,0 +1,35 @@
+---
+# Installation von Ruby via RVM
+
+- name: Install prerequisites for RVM
+  apt: pkg={{ item }} state=present
+  with_items:
+   - curl
+  sudo: yes
+  tags:
+    - rvm
+
+- name: Install RVM
+  script: roles/redmine/files/rvm-installer stable
+  tags: 
+    - rvm
+
+- name: Add RVM loading to bashrc
+  lineinfile: dest=~/.bashrc 
+    insertbefore='^# If not running interactively' 
+    regexp='^source $HOME/.rvm/scripts/rvm'
+    line='source $HOME/.rvm/scripts/rvm\n'
+  tags:
+    - ruby
+
+- name: Install Ruby
+  shell: rvm install 2.0.0
+  tags:
+    - ruby
+
+- name: set ruby 2.0 as default
+  shell: rvm alias create default 2.0.0
+  tags:
+    - ruby
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
