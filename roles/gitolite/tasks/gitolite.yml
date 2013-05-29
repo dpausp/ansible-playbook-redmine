@@ -10,7 +10,7 @@
   file: path=~/bin state=directory owner=git group=git
 
 - name: install gitolite
-  shell: {{ gitolite_dir }}/install -to ~/bin
+  shell: "{{ gitolite_dir }}/install -to ~/bin"
   sudo: yes
   sudo_user: git
 

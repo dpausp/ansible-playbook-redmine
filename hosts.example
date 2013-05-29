@@ -1,0 +1,8 @@
+[db]
+someserver
+
+[redmine_server]
+someserver
+
+[git_server]
+someserver
