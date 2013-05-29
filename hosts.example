@@ -1,5 +1,6 @@
+# only one host entry per section is supported and all must point to the same machine
 [db]
-someserver
+someserver 
 
 [redmine_server]
 someserver
