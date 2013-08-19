@@ -8,6 +8,8 @@
 
 - name: make bin dir
   file: path=~/bin state=directory owner=git group=git
+  sudo: yes
+  sudo_user: git
 
 - name: install gitolite
   shell: "{{ gitolite_dir }}/install -to ~/bin"
@@ -15,7 +17,7 @@
   sudo_user: git
 
 - name: copy public gitolite admin key
-  copy: src={{ gitolite_admin_keyfile }}.pub dest=/dev/shm/gitolite_admin_key.pub owner=git group=git
+  copy: src=gitolite_admin_key.pub dest=/dev/shm/gitolite_admin_key.pub owner=git group=git
 
 - name: gitolite setup
   shell: ~/bin/gitolite setup -pk /dev/shm/gitolite_admin_key.pub

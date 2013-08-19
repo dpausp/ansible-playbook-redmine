@@ -35,12 +35,12 @@
     - cf
 
 - name: install nginx
-  shell: creates=/home/redmine/nginx/sbin/nginx   
+  shell: creates=/srv/redmine/nginx/sbin/nginx   
     ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
-    --auto-download --prefix=/home/redmine/nginx --auto
+    --auto-download --prefix=/srv/redmine/nginx --auto
 
 - name: setup nginx configuration file
-  template: src=nginx.conf.j2 dest=/home/redmine/nginx/conf/nginx.conf
+  template: src=nginx.conf.j2 dest=/srv/redmine/nginx/conf/nginx.conf
   tags:
     - cf
 

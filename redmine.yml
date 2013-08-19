@@ -7,10 +7,10 @@
     group: name=redmine_adm state=present
 
   - name: create redmine user
-    user: name=redmine shell=/bin/bash groups=redmine_adm state=present
+    user: name=redmine shell=/bin/bash groups=redmine_adm home=/srv/redmine state=present
 
   - name: prepare .ssh dir
-    file: path=/home/redmine/.ssh/ owner=redmine group=redmine state=directory
+    file: path=/srv/redmine/.ssh/ owner=redmine group=redmine state=directory
 
   - name: set up SSH authorized key for redmine user
     authorized_key: "user=redmine key='{{ lookup('file', user_redmine_pubkeyfile) }}' state=present"

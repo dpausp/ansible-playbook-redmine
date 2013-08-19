@@ -18,7 +18,7 @@
   lineinfile: dest=~/.bashrc 
     insertbefore='^# If not running interactively' 
     regexp='^source $HOME/.rvm/scripts/rvm'
-    line='source $HOME/.rvm/scripts/rvm\n'
+    line='source $HOME/.rvm/scripts/rvm'
   tags:
     - ruby
 

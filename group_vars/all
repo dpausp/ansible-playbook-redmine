@@ -1,3 +1,4 @@
+ntpserver: ntp2.lrz.de
 redmine_db_name: redmine
 redmine_db_user: redmine
 gitolite_admin_keyfile: /dev/shm/id_gitolite_admin

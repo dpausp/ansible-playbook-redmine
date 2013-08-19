@@ -2,4 +2,4 @@
 #http_port: 80
 #https_port: 443
 user_redmine_pubkeyfile: redmine_key.pub
-redmine_dir: /home/redmine/redmine
+redmine_dir: /srv/redmine/redmine

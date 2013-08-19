@@ -14,8 +14,8 @@ events {
 
 
 http {
-    passenger_root /home/redmine/.rvm/gems/{{ ruby_current }}/gems/passenger-{{ passenger_version }};
-    passenger_ruby /home/redmine/.rvm/wrappers/{{ ruby_current }}/ruby;
+    passenger_root /srv/redmine/.rvm/gems/{{ ruby_current }}/gems/passenger-{{ passenger_version }};
+    passenger_ruby /srv/redmine/.rvm/wrappers/{{ ruby_current }}/ruby;
 
     include       mime.types;
     default_type  application/octet-stream;
@@ -37,7 +37,7 @@ http {
    server {
       listen 80;
       server_name {{ ansible_fqdn }};
-      root /home/redmine/redmine/public;
+      root /srv/redmine/redmine/public;
       passenger_enabled on;
    }
     
