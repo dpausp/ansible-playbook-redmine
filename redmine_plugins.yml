@@ -1,0 +1,9 @@
+---
+- name: deploy Redmine plugins
+  hosts: redmine_server
+  user: redmine_adm
+  roles:
+    - redmine_plugins
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

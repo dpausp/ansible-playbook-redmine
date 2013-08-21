@@ -35,7 +35,8 @@
     - cf
 
 - name: install nginx
-  shell: creates=/srv/redmine/nginx/sbin/nginx   
+  shell: 
+    # creates=/srv/redmine/nginx/sbin/nginx   
     ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix=/srv/redmine/nginx --auto
 

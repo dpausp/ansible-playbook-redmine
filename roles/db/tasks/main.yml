@@ -7,15 +7,17 @@
    - postgresql-9.1 
    - postgresql-contrib-9.1 
    - postgresql-server-dev-9.1
+  notify: restart Postgres
 
 - name: allow password access to redmine db
   lineinfile: "dest=/etc/postgresql/9.1/main/pg_hba.conf state=present
     regexp='^local redmine redmine'
     insertafter='^# TYPE  DATABASE'
     line='local redmine redmine md5# inserted by ansible-playbook-redmine-git'"
+  notify: restart Postgres
 
-- name: (Re)Start Postgres service
-  service: name=postgresql state=restarted enabled=true
+- name: start postgres service on boot
+  service: name=postgresql state=started enabled=true
 
 - name: Install python-psycopg2
   apt: pkg=python-psycopg2 state=present

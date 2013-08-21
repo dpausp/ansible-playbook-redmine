@@ -1,0 +1,8 @@
+# install some redmine plugins. Separate plugins can be installed by specifying their names as tags.
+---
+- include: redmine_git_hosting.yml tags=redmine_git_hosting
+- include: redmine_didyoumean.yml tags=redmine_didyoumean
+- include: redmine_stealth.yml tags=redmine_stealth
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

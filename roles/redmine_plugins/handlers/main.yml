@@ -1,0 +1,11 @@
+# handlers for redmine plugins
+---
+- name: restart nginx
+  sudo: yes
+  service: name=nginx state=restarted
+
+- name: restart redmine
+  command: touch /srv/redmine/redmine/tmp/restart.txt
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

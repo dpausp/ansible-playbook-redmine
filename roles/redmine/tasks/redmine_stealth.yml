@@ -1,0 +1,28 @@
+" Press ? for help
+
+.. (up a dir)
+<nsible-playbook-redmine/roles/
+▸ common/
+▾ db/
+  ▾ handlers/
+      main.yml
+  ▾ tasks/
+      main.yml
+▾ gitolite/
+  ▸ handlers/
+  ▾ tasks/
+      git-daemon.yml
+      gitolite.yml
+      main.yml
+  ▸ templates/
+▸ redmine/
+▾ redmine_plugins/
+  ▾ files/
+      post-receive* [RO]
+  ▾ handlers/
+      main.yml
+  ▾ tasks/
+      main.yml
+      redmine_didyoumean.yml
+      redmine_git_hosting.yml
+  ▸ templates/

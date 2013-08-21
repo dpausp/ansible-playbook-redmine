@@ -11,9 +11,8 @@
     - common
 
 - include: database.yml
-
 - include: gitolite.yml
-
 - include: redmine.yml
+- include: redmine_plugins.yml
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
