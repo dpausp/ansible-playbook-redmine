@@ -13,10 +13,10 @@
     - libcurl4-openssl-dev
 
 - name: install builder gem
-  gem: name=builder state=present
+  gem: name=builder state=latest
 
 - name: install passenger gem
-  gem: name=passenger state=present
+  gem: name=passenger state=latest
 
 - name: get installed ruby version
   shell: rvm current
@@ -25,7 +25,7 @@
     - cf
 
 - name: get installed passenger version
-  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1
+  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1 | cut -d ',' -f 1
   register: pv_out
   tags:
     - cf

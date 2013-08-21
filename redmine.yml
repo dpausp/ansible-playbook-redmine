@@ -1,36 +1,52 @@
 ---
-- name: redmine user
+- name: redmine users and groups
   hosts: redmine_server
   user: root
   tasks:
+  - name: create redmine group
+    group: name=redmine state=present
+
+  - name: create redmine user
+    user: name=redmine shell=/bin/bash group=redmine groups=redmine home=/srv/redmine state=present
+
   - name: create redmine_adm group
     group: name=redmine_adm state=present
 
-  - name: create redmine user
-    user: name=redmine shell=/bin/bash groups=redmine_adm home=/srv/redmine state=present
+  - name: create redmine_adm user
+    user: name=redmine_adm shell=/bin/bash group=redmine_adm groups=redmine,redmine_adm state=present
 
-  - name: prepare .ssh dir
-    file: path=/srv/redmine/.ssh/ owner=redmine group=redmine state=directory
+  - name: fix redmine dir permissions
+    file: dest=/srv/redmine mode=775 state=directory recurse=yes
+    tags:
+      - perms
 
-  - name: set up SSH authorized key for redmine user
-    authorized_key: "user=redmine key='{{ lookup('file', user_redmine_pubkeyfile) }}' state=present"
+  - name: prepare .ssh dir for redmine_adm
+    file: path=/home/redmine_adm/.ssh/ owner=redmine_adm group=redmine_adm state=directory
+
+  - name: prepare .ssh dir for redmine
+    file: path=/srv/redmine/.ssh/ owner=redmine group=redmine_adm state=directory
+
+
+  - name: set up SSH authorized key for redmine_adm user
+    authorized_key: "user=redmine_adm key='{{ lookup('file', user_redmine_pubkeyfile) }}' state=present"
       
-  - name: give passwordless sudo to redmine_adm (will be reset later)
-    lineinfile: "dest=/etc/sudoers regexp='^%redmine_adm' state=present line='%redmine_adm     ALL = NOPASSWD: ALL'"
+  - name: give passwordless sudo to redmine_adm
+    lineinfile: "dest=/etc/sudoers state=present 
+      regexp='^redmine_adm ALL= NOPASSWD' 
+      line='redmine_adm ALL= NOPASSWD: ALL'"
+
+  - name: give passwordless sudo to redmine to redmine_adm
+    lineinfile: "dest=/etc/sudoers state=present 
+      regexp='^redmine_adm ALL=[(]redmine[)]' 
+      line='redmine_adm ALL=(redmine) NOPASSWD: ALL'"
 
 - name: deploy Redmine
   hosts: redmine_server
-  user: redmine
+  user: redmine_adm
   vars_files:
     - secret_passwords.yml
   roles:
     - redmine
-  post_tasks:
-    - name: remove passwordless sudo from redmine_adm
-      lineinfile: "dest=/etc/sudoers regexp='^%redmine_adm' state=absent line='%redmine_adm     ALL = NOPASSWD: ALL'"
-      sudo: yes
-      tags:
-        - cleanup
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

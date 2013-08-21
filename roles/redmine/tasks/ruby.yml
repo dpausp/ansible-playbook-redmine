@@ -14,11 +14,28 @@
   tags: 
     - rvm
 
-- name: Add RVM loading to bashrc
+- name: create RVM link for redmine
+  file: dest=/srv/redmine/.rvm src=/home/redmine_adm/.rvm state=link
+  sudo: yes
+  sudo_user: redmine
+  tags:
+    - ruby
+
+- name: Add RVM loading to bashrc for redmine_adm
   lineinfile: dest=~/.bashrc 
     insertbefore='^# If not running interactively' 
     regexp='^source $HOME/.rvm/scripts/rvm'
     line='source $HOME/.rvm/scripts/rvm'
+  tags:
+    - ruby
+
+- name: Add RVM loading to bashrc for redmine
+  lineinfile: dest=~/.bashrc 
+    insertbefore='^# If not running interactively' 
+    regexp='^source $HOME/.rvm/scripts/rvm'
+    line='source $HOME/.rvm/scripts/rvm'
+  sudo: yes
+  sudo_user: redmine
   tags:
     - ruby
 
@@ -27,7 +44,7 @@
   tags:
     - ruby
 
-- name: set ruby 2.0 as default
+- name: set ruby 2.0 as default for redmine_adm
   shell: rvm alias create default 2.0.0
   tags:
     - ruby

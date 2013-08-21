@@ -16,6 +16,9 @@
   sudo: yes
   sudo_user: git
 
+- name: generate ssh key for gitolite admin
+  local_action: command creates=gitolite_admin_key ssh-keygen -f gitolite_admin_key -N ""
+
 - name: copy public gitolite admin key
   copy: src=gitolite_admin_key.pub dest=/dev/shm/gitolite_admin_key.pub owner=git group=git
 

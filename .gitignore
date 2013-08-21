@@ -1,3 +1,5 @@
 redmine_key.pub
+gitolite_admin_key
+gitolite_admin_key.pub
 secret_passwords.yml
 hosts

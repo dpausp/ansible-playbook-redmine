@@ -6,51 +6,128 @@
   sudo: yes
 
 - name: setup sudoers for redmine -> git
-  lineinfile: dest=/etc/sudoers 
-    line='redmine   ALL=(git)      NOPASSWD:ALL' 
-    regexp=^redmine 
-    state=present
+  lineinfile: dest=/etc/sudoers state=present
+    regexp='^redmine ALL=[(]git[)]' 
+    line='redmine ALL=(git) NOPASSWD:ALL' 
+  sudo: yes
+
+- name: setup sudoers for redmine_adm -> git
+  lineinfile: dest=/etc/sudoers state=present
+    regexp='^redmine_adm ALL=[(]git[)]' 
+    line='redmine_adm ALL=(git) NOPASSWD:ALL' 
   sudo: yes
 
 - name: setup sudoers for git -> redmine
-  lineinfile: dest=/etc/sudoers
-    line='git   ALL=(redmine)      NOPASSWD:ALL' 
-    regexp=^git 
-    state=present
+  lineinfile: dest=/etc/sudoers state=present
+    regexp='^git ALL=[(]redmine[)]'
+    line='git ALL=(redmine) NOPASSWD:ALL' 
   sudo: yes
 
 - name: copy over public key for gitolite administration
-  copy: src={{ gitolite_admin_keyfile }}.pub dest=~/.ssh/redmine_gitolite_admin_id_rsa.pub
+  copy: src=gitolite_admin_key.pub dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine_adm
+  sudo: yes
+  tags:
+    - p
 
 - name: copy over private key for gitolite administration
-  copy: src={{ gitolite_admin_keyfile }} dest=~/.ssh/redmine_gitolite_admin_id_rsa mode=0600
+  copy: src=gitolite_admin_key dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine_adm
+  sudo: yes
+  tags:
+    - p
+
+- name: copy post-receive hook
+  sudo: yes
+  copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
+  tags:
+    - p
+
+- name: set plugin dir
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_git_hosting
+  tags:
+    - p
 
 - name: clone plugin repository
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ redmine_dir }}/plugins/redmine_git_hosting
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ pdir }}
+  tags:
+    - p
+
+- name: fix permissions
+  file: dest={{ pdir }} state=directory group=redmine mode=750
+  tags:
+    - p
+
+- name: <plugdir>/bin must be writable for redmine
+  file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine_adm mode=2770
+  sudo: yes
+  tags:
+    - p
+
+- name: create tmp dir for plugin
+  sudo: yes
+  file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine group=redmine_adm mode=2770
+  tags:
+    - p
 
 - name: run bundle install 
   command: chdir={{ redmine_dir }} bundle install
 
 - name: add http servername to redmine_git_hosting configuration
-  lineinfile: dest={{ redmine_dir }}/plugins/redmine_git_hosting/init.rb
+  lineinfile: dest={{ pdir }}/init.rb
     line="      'httpServer'                    => '{{ ansible_fqdn }}',"
     regexp="^\s*'httpServer'"
     state=present
+  tags:
+    - p
 
 - name: add git servername to redmine_git_hosting configuration
-  lineinfile: dest={{ redmine_dir }}/plugins/redmine_git_hosting/init.rb
+  lineinfile: dest={{ pdir }}/init.rb state=present
     line="      'gitServer'                     => '{{ ansible_fqdn }}',"
     regexp="^\s*'gitServer'"
-    state=present
+  tags:
+    - p
+
+- name: fix tmp path in redmine_git_hosting configuration
+  lineinfile: dest={{ pdir }}/init.rb state=present
+    line="      'gitTempDataDir'                => '/srv/redmine/tmp/redmine_git_hosting/',"
+    regexp="^\s*'gitTempDataDir'"
+  tags:
+    - p
+
+- name: fix key pubkey path in redmine_git_hosting configuration
+  lineinfile: dest={{ pdir }}/init.rb state=present
+    line="      'gitoliteIdentityFile'          => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa',"
+    regexp="^\s*'gitoliteIdentityFile'"
+  tags:
+    - p
+
+- name: fix gitolite pubkey path in redmine_git_hosting configuration
+  lineinfile: dest={{ pdir }}/init.rb state=present
+    line="      'gitoliteIdentityPublicKeyFile' => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub',"
+    regexp="^\s*'gitoliteIdentityPublicKeyFile'"
+  tags:
+    - p
 
 - name: load default settings for plugin
   command: chdir={{ redmine_dir }} 
-    bundle exec rake redmine_git_hosting:restore_defaults RAILS_ENV=production
+    rake redmine_git_hosting:restore_defaults RAILS_ENV=production
+  tags:
+    - p
 
 - name: migrate database for plugins
   command: chdir={{ redmine_dir }} 
-    bundle exec rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
+   rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
+  tags:
+    - p
   notify:
     - restart nginx
 
+- name: fix permissions in <plugdir>/bin
+  file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine_adm mode=755
+  sudo: yes
+  with_items:
+    - run_as_git_user
+    - gitolite_admin_ssh
+    - run_git_as_git_user
+  tags:
+    - p
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

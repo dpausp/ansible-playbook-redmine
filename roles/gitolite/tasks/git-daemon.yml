@@ -13,7 +13,22 @@
 - name: add git-daemon as default service
   service: name=git-daemon enabled=yes
 
-- name: start git-daemon service
-  service: name=git-daemon state=started
+- name: wait a second ...
+  pause: seconds=1
+
+# this step fails often, waiting seems to help...
+
+- name: (re)start git-daemon service
+  service: name=git-daemon state=restarted
+  ignore_errors: yes
+  register: result
+
+- name: wait 2 second ...
+  pause: seconds=1
+  when: result|failed
+
+- name: (re)start git-daemon service (try again)
+  service: name=git-daemon state=restarted
+  when: result|failed
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
