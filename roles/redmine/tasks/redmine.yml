@@ -10,6 +10,10 @@
     - libxslt1-dev 
     - libxml2-dev
 
+- name: install unzip
+  apt: pkg=unzip state=present
+  sudo: yes
+
 - name: clone redmine repository
   git: repo=git://github.com/redmine/redmine.git dest={{ redmine_dir }} version=2.3-stable
 
@@ -32,6 +36,11 @@
 
 - name: create database config file
   template: src=database.yml.j2 dest={{ redmine_dir }}/config/database.yml group=redmine mode=640
+
+- name: remove nokogiri gem from Gemfile (problems with plugins)
+  lineinfile: dest={{ redmine_dir }}/Gemfile state=absent
+    regexp='^\s*gem .nokogiri.'
+  tags: noko
 
 - name: run redmine bundle update
   command: chdir={{ redmine_dir }} bundle update

@@ -1,0 +1,36 @@
+---
+- name: set plugin dir
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_dmsf
+
+- name: find out if xapian-full gem is installed
+  shell: gem list | grep xapian
+  register: xapian_present
+  ignore_errors: yes
+
+- name: get and unpack xapian-full gem
+  shell: chdir=/dev/shm gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
+  when: xapian_present|failed
+
+- name: get patch for xapian
+  get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/dev/shm/4.patch
+  when: xapian_present|failed
+
+- name: patch xapian-full
+  shell: chdir=/dev/shm/xapian-full-1.2.3 patch < ../4.patch
+  when: xapian_present|failed
+
+- name: build & install xapian-full
+  shell: chdir=/dev/shm/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
+  when: xapian_present|failed
+
+- name: clone plugin repository
+  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - run bundle update
+   - run bundle install
+   - run plugin migration
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

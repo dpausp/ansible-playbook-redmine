@@ -1,5 +1,17 @@
 # handlers for redmine plugins
 ---
+- name: run bundle update
+  command: chdir={{ redmine_dir }} bundle update
+
+- name: run bundle install 
+  command: chdir={{ redmine_dir }} bundle install --without test
+
+- name: fix permissions
+  file: dest={{ pdir }} state=directory group=redmine mode=750
+
+- name: run plugin migration
+  command: chdir={{ redmine_dir }} rake redmine:plugins:migrate RAILS_ENV=production
+
 - name: restart nginx
   sudo: yes
   service: name=nginx state=restarted
