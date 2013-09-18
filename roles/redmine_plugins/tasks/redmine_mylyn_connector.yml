@@ -1,0 +1,15 @@
+---
+- name: set plugin dir
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_mylyn_connector
+
+- name: clone plugin repository
+  git: repo=https://github.com/danmunn/redmine_mylyn_connector dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - run bundle update
+   - run bundle install
+   - run plugin migration
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

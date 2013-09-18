@@ -6,6 +6,7 @@
 - include: redmine_stealth.yml tags=redmine_stealth
 - include: redmine_auto_percent.yml tags=redmine_auto_percent
 - include: redmine_issue_checklist.yml tags=redmine_issue_checklist
+- include: redmine_mylyn_connector.yml tags=redmine_mylyn_connector
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
