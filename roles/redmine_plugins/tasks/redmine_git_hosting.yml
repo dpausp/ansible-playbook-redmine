@@ -24,81 +24,97 @@
   sudo: yes
 
 - name: copy over public key for gitolite administration
-  copy: src=gitolite_admin_key.pub dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine_adm
+  copy: src=gitolite_admin_key.pub dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine
   sudo: yes
 
 - name: copy over private key for gitolite administration
-  copy: src=gitolite_admin_key dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine_adm
+  copy: src=gitolite_admin_key dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine
   sudo: yes
 
 - name: copy post-receive hook
   sudo: yes
   copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
 
+- include: redmine_plugin_views_revisions.yml
+
 - name: set plugin dir
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_git_hosting
 
 - name: clone plugin repository
   git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ pdir }}
-  notify: restart redmine
+  notify:
+    - fix permissions
 
-- name: fix permissions
-  file: dest={{ pdir }} state=directory group=redmine mode=750
+  meta: flush_handlers
 
 - name: <plugdir>/bin must be writable for redmine
-  file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine_adm mode=2770
+  file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine mode=2770
   sudo: yes
-
-- name: create tmp dir for plugin
-  sudo: yes
-  file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine group=redmine_adm mode=2770
-
-- name: run bundle install 
-  command: chdir={{ redmine_dir }} bundle install
-  notify: restart nginx
 
 - name: add http servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb
-    line="      'httpServer'                    => '{{ ansible_fqdn }}',"
-    regexp="^\s*'httpServer'"
+    line="      :http_server_domain                => '{{ ansible_fqdn }}',"
+    regexp="^\s*:http_server_domain"
     state=present
 
-- name: add git servername to redmine_git_hosting configuration
+- name: add https servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      'gitServer'                     => '{{ ansible_fqdn }}',"
-    regexp="^\s*'gitServer'"
+    line="      :https_server_domain               => '{{ ansible_fqdn }}',"
+    regexp="^\s*:https_server_domain"
+
+- name: add ssh servername to redmine_git_hosting configuration
+  lineinfile: dest={{ pdir }}/init.rb state=present
+    line="      :ssh_server_domain                 => '{{ ansible_fqdn }}',"
+    regexp="^\s*:ssh_server_domain"
 
 - name: fix tmp path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      'gitTempDataDir'                => '/srv/redmine/tmp/redmine_git_hosting/',"
-    regexp="^\s*'gitTempDataDir'"
+    line="      :gitolite_temp_dir                     => '/srv/redmine/tmp/redmine_git_hosting/',"
+    regexp="^\s*:gitolite_temp_dir"
 
 - name: fix key pubkey path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      'gitoliteIdentityFile'          => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa',"
-    regexp="^\s*'gitoliteIdentityFile'"
+    line="      :gitolite_ssh_private_key      => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa',"
+    regexp="^\s*:gitolite_ssh_private_key"
 
 - name: fix gitolite pubkey path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      'gitoliteIdentityPublicKeyFile' => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub',"
-    regexp="^\s*'gitoliteIdentityPublicKeyFile'"
+    line="      :gitolite_ssh_public_key       => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub',"
+    regexp="^\s*:gitolite_ssh_public_key"
+  notify: 
+    - run bundle update
+    - run bundle install
+    - run plugin migration
+
+- meta: flush_handlers
 
 - name: load default settings for plugin
   command: chdir={{ redmine_dir }} 
     rake redmine_git_hosting:restore_defaults RAILS_ENV=production
+  notify: 
+    - restart redmine
 
-- name: migrate database for plugins
-  command: chdir={{ redmine_dir }} 
-   rake redmine:plugins:migrate NAME=redmine_git_hosting RAILS_ENV=production
-  notify: restart redmine
+- name: create tmp dir for plugin
+  sudo: yes
+  file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
+
+- name: fix permissions for logfile
+  file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=755
+  sudo: yes
+  tags:
+    - perm
 
 - name: fix permissions in <plugdir>/bin
-  file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine_adm mode=755
+  file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine mode=755
   sudo: yes
   with_items:
-    - run_as_git_user
+    - run_git_cmd_as_gitolite_user
     - gitolite_admin_ssh
-    - run_git_as_git_user
+    - run_shell_cmd_as_gitolite_user
+  notify: 
+    - restart redmine
 
+- name: process version change
+  command: chdir={{ redmine_dir }} rake redmine:plugins:process_version_change RAILS_ENV=production
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
