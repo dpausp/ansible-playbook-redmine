@@ -49,7 +49,7 @@
   command: chdir={{ redmine_dir }} bundle install --without test
 
 - name: generate secret rails token
-  command: chdir={{ redmine_dir }} rake generate_secret_token
+  command: chdir={{ redmine_dir }} rake generate_secret_token RAILS_ENV=production
 
 - name: migrate database
   command: chdir={{ redmine_dir }} rake db:migrate RAILS_ENV=production
