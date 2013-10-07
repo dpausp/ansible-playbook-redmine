@@ -1,6 +1,12 @@
 ---
 # install redmine_git_hosting plugin
 
+- include: redmine_plugin_views_revisions.yml
+
+- name: set plugin dir (redmine_git_hosting)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_git_hosting
+  tags: dir
+
 - name: install system ruby for redmine_git_hosting plugin hook
   apt: pkg=ruby state=present
   sudo: yes
@@ -35,21 +41,12 @@
   sudo: yes
   copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
 
-- include: redmine_plugin_views_revisions.yml
-
-- name: set plugin dir
-  set_fact: pdir={{ redmine_dir }}/plugins/redmine_git_hosting
-
 - name: clone plugin repository
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ pdir }}
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=54d9fd6384f839db2df dest={{ pdir }}
   notify:
     - fix permissions
 
-  meta: flush_handlers
-
-- name: <plugdir>/bin must be writable for redmine
-  file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine mode=2770
-  sudo: yes
+- meta: flush_handlers
 
 - name: add http servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb
@@ -94,6 +91,11 @@
   notify: 
     - restart redmine
 
+- name: <plugdir>/bin must be writable for redmine
+  file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine mode=2770
+  sudo: yes
+  tags: dir
+
 - name: create tmp dir for plugin
   sudo: yes
   file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
@@ -101,18 +103,6 @@
 - name: fix permissions for logfile
   file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=755
   sudo: yes
-  tags:
-    - perm
-
-- name: fix permissions in <plugdir>/bin
-  file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine mode=755
-  sudo: yes
-  with_items:
-    - run_git_cmd_as_gitolite_user
-    - gitolite_admin_ssh
-    - run_shell_cmd_as_gitolite_user
-  notify: 
-    - restart redmine
 
 - name: process version change
   command: chdir={{ redmine_dir }} rake redmine:plugins:process_version_change RAILS_ENV=production
