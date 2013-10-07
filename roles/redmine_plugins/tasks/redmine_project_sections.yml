@@ -1,0 +1,18 @@
+---
+- name: set plugin dir (redmine_project_sections)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_project_sections
+
+- name: get plugin archive
+  get_url: dest={{ redmine_dir }}/plugins/ url=http://projects.andriylesyuk.com/attachments/download/496/project_section-0.0.1b.tar.bz2
+  register: result
+
+- name: untar archive
+  shell: chdir={{ redmine_dir }}/plugins tar xjf project_section-0.0.1b.tar.bz2
+  when: result.changed
+  notify:
+    - fix permissions
+    - run plugin migration
+    - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

@@ -1,12 +1,18 @@
 # install some redmine plugins. Separate plugins can be installed by specifying their names as tags.
 ---
 - include: redmine_git_hosting.yml tags=redmine_git_hosting
-- include: redmine_dmsf.yml tags=redmine_dmsf
 - include: redmine_didyoumean.yml tags=redmine_didyoumean
 - include: redmine_stealth.yml tags=redmine_stealth
 - include: redmine_auto_percent.yml tags=redmine_auto_percent
 - include: redmine_issue_checklist.yml tags=redmine_issue_checklist
 - include: redmine_mylyn_connector.yml tags=redmine_mylyn_connector
+- include: redmine_lightbox.yml tags=redmine_lightbox
+- include: redmine_wiki_extensions.yml tags=redmine_wiki_extensions
+- include: redmine_knowledgebase.yml tags=redmine_knowledgebase
+- include: my_projects.yml tags=my_projects
+- include: redmine_theme_changer.yml tags=redmine_theme_changer
+- include: redmine_project_sections.yml tags=redmine_project_sections
+- include: redmine_dmsf.yml tags=redmine_dmsf
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

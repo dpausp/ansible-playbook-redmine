@@ -14,6 +14,10 @@
   apt: pkg=unzip state=present
   sudo: yes
 
+- name: install mercurial
+  apt: pkg=mercurial state=present
+  sudo: yes
+
 - name: clone redmine repository
   git: repo=git://github.com/redmine/redmine.git dest={{ redmine_dir }} version=2.3-stable
 

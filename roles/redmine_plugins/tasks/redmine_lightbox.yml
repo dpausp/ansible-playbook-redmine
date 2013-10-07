@@ -1,0 +1,12 @@
+---
+- name: set plugin dir
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_lightbox
+
+- name: clone plugin repository
+  git: repo=https://github.com/zipme/redmine_lightbox dest={{ pdir }}
+  notify: 
+    - fix permssions
+    - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
