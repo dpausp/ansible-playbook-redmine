@@ -5,7 +5,7 @@
 - name: clone plugin repository
   git: repo=https://github.com/zipme/redmine_lightbox dest={{ pdir }}
   notify: 
-    - fix permssions
+    - fix permissions
     - restart redmine
 
 
