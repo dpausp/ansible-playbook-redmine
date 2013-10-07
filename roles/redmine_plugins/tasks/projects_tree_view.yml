@@ -1,0 +1,12 @@
+---
+- name: set plugin dir (projects_tree_view)
+  set_fact: pdir={{ redmine_dir }}/plugins/projects_tree_view
+
+- name: clone plugin repository
+  git: repo=https://github.com/PiratenBayernIT/projects_tree_view dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
