@@ -96,6 +96,17 @@
   sudo: yes
   tags: dir
 
+- name: fix permissions in <plugdir>/bin
+  file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine mode=755
+  sudo: yes
+  with_items:
+    - run_git_cmd_as_gitolite_user
+    - gitolite_admin_ssh
+    - run_shell_cmd_as_gitolite_user
+  notify: 
+    - restart redmine
+  ignore_errors: yes
+
 - name: create tmp dir for plugin
   sudo: yes
   file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770

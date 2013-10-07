@@ -21,14 +21,14 @@
 - name: (re)start git-daemon service
   service: name=git-daemon state=restarted
   ignore_errors: yes
-  register: result
+  register: success
 
-- name: wait 2 second ...
+- name: wait 2 seconds ...
   pause: seconds=1
-  when: result|failed
+  when: success|failed
 
 - name: (re)start git-daemon service (try again)
   service: name=git-daemon state=restarted
-  when: result|failed
+  when: success|failed
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

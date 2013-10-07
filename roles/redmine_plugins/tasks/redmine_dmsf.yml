@@ -15,7 +15,7 @@
 
 - name: get and unpack xapian-full gem
   shell: chdir=/dev/shm gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
-  when: xapian_present|failed
+  when: xapian_present
 
 - name: get patch for xapian
   get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/dev/shm/4.patch
@@ -29,7 +29,7 @@
   shell: chdir=/dev/shm/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
   when: xapian_present|failed
 
-- name: clone plugin repository
+- name: clone plugin repository (redmine_dmsf)
   git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }}
   notify: 
    - fix permissions
