@@ -1,11 +1,6 @@
-#user  nobody;
-worker_processes  1;
-
-#error_log  logs/error.log;
-#error_log  logs/error.log  notice;
-#error_log  logs/error.log  info;
-
-#pid        logs/nginx.pid;
+worker_processes  {{ ansible_processor_cores }};
+error_log  logs/error.log warn;
+pid  logs/nginx.pid;
 
 
 events {
@@ -14,35 +9,49 @@ events {
 
 
 http {
-    passenger_root /srv/redmine/.rvm/gems/{{ ruby_current }}/gems/passenger-{{ passenger_version }};
-    passenger_ruby /srv/redmine/.rvm/wrappers/{{ ruby_current }}/ruby;
-    passenger_user_switching on;
-
-    include       mime.types;
+    include  mime.types;
     default_type  application/octet-stream;
+    passenger_user_switching  on;
+    passenger_root  /srv/redmine/.rvm/gems/{{ ruby_current }}/gems/passenger-{{ passenger_version }};
 
-    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-    #                  '$status $body_bytes_sent "$http_referer" '
-    #                  '"$http_user_agent" "$http_x_forwarded_for"';
-
-    #access_log  logs/access.log  main;
-
-    sendfile        on;
-    #tcp_nopush     on;
-
-    #keepalive_timeout  0;
-    keepalive_timeout  65;
-
-    #gzip  on;
-
-   server {
-      listen 80;
-      server_name {{ ansible_fqdn }};
-      root /srv/redmine/redmine/public;
-      passenger_enabled on;
-      passenger_user redmine;
-      passenger_group redmine;
-   }
+    server {
+        # HTTP: just redirect to HTTPS
+        listen  {{ http_port }};
+        server_name  {{ ansible_fqdn }};
+        return  301  https://{{ansible_fqdn}}$request_uri;
+    }
     
+    server {
+#BASIC settings
+        listen  {{ https_port }};
+        server_name  {{ ansible_fqdn }};
+        root  /srv/redmine/redmine/public;
+        client_max_body_size  55M;
+        keepalive_timeout  65;
+        sendfile  on;
+        gzip  off;
 
+#PASSENGER settings
+        passenger_enabled  on;
+        passenger_user  redmine;
+        passenger_group  redmine;
+        passenger_ruby  /srv/redmine/.rvm/wrappers/{{ ruby_current }}/ruby;
+
+#SSL configuration
+        ssl  on;
+        ssl_certificate  {{ssl_cert_filename}};
+        ssl_certificate_key  {{ssl_cert_key_filename}};
+        ssl_session_cache  shared:SSL:10m;
+        ssl_session_timeout  10m;
+        ssl_protocols  {{ ssl_old_protocols }} TLSv1 TLSv1.1 TLSv1.2;
+        ssl_ciphers  HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers  on;
+
+#REDMINE_PLUGINS: additional settings for redmine plugins
+
+# END SERVER HTTPS
+    }
+# END HTTP
 }
+
+# vim: set filetype=nginx sw=4 ts=4 sts=4 expandtab:
