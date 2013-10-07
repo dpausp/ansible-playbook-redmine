@@ -1,14 +1,12 @@
 ---
-- name: set plugin dir
+- name: set plugin dir (redmine_didyoumean)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_didyoumean
 
 - name: clone plugin repository
   git: repo=https://github.com/abahgat/redmine_didyoumean dest={{ pdir }}
-  notify: restart redmine
-
-- name: fix permissions
-  file: dest={{ pdir }} state=directory group=redmine mode=750
-  notify: restart redmine
+  notify: 
+   - fix permissions
+   - restart redmine
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

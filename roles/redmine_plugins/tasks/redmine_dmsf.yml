@@ -1,6 +1,12 @@
 ---
-- name: set plugin dir
+- name: set plugin dir (redmine_dmsf)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_dmsf
+  tags:
+    - nok
+
+- name: install uuid-dev
+  apt: pkg=uuid-dev state=present
+  sudo: yes
 
 - name: find out if xapian-full gem is installed
   shell: gem list | grep xapian

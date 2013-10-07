@@ -1,7 +1,7 @@
 ---
 # install redmine_plugin_views_revisions plugin
 
-- name: set plugin dir
+- name: set plugin dir (redmine_plugin_views_revisions)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_plugin_views_revisions
 
 - name: clone plugin repository

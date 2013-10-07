@@ -1,5 +1,5 @@
 ---
-- name: set plugin dir
+- name: set plugin dir (redmine_issue_checklist)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_issue_checklist
 
 - name: get plugin archive
@@ -9,14 +9,10 @@
 - name: unzip archive
   shell: chdir={{ redmine_dir }}/plugins unzip redmine_issue_checklist-2_0_5.zip
   when: result.changed
+  notify:
+    - fix permissions
+    - run plugin migration
+    - restart redmine
 
-- name: fix permissions
-  file: dest={{ pdir }} state=directory group=redmine mode=750
-  when: result.changed
-
-- name: run plugin migration
-  command: chdir={{ redmine_dir }} rake redmine:plugins NAME=redmine_issue_checklist RAILS_ENV=production
-  when: result.changed
-  notify: restart redmine
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

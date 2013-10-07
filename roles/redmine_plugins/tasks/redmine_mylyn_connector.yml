@@ -1,5 +1,5 @@
 ---
-- name: set plugin dir
+- name: set plugin dir (redmine_mylyn_connector)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_mylyn_connector
 
 - name: clone plugin repository
