@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+#{{ ansible_generated }}
 
 require 'digest/sha1'
 require 'net/http'

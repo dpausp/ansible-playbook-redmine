@@ -1,4 +1,5 @@
 #!/bin/sh
+#{{ ansible_managed }}
  
 ### BEGIN INIT INFO
 # Provides:          nginx
