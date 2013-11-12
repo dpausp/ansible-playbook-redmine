@@ -27,4 +27,10 @@
   sudo: yes
   sudo_user: git
 
+- name: fix gitolite update hook for HTTP access
+  lineinfile: dest=~/.gitolite/hooks/common/update state=present
+  regexp='^BEGIN { exit 0'
+  before='^use strict;'
+  line='BEGIN { exit 0 if exists $ENV{GL_BYPASS_UPDATE_HOOK}; }'
+
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

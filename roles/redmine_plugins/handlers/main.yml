@@ -8,6 +8,7 @@
 
 - name: fix permissions
   file: dest={{ pdir }} state=directory group=redmine mode=750
+  sudo: yes
 
 - name: run plugin migration
   command: chdir={{ redmine_dir }} rake redmine:plugins:migrate RAILS_ENV=production
