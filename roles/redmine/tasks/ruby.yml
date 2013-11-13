@@ -5,7 +5,7 @@
   apt: pkg={{ item }} state=present
   with_items:
    - curl
-  sudo: yes
+  sudo_user: root
   tags:
     - rvm
 
@@ -16,10 +16,9 @@
 
 - name: create RVM link for redmine
   file: dest=/srv/redmine/.rvm src=/home/redmine_adm/.rvm state=link
-  sudo: yes
   sudo_user: redmine
   tags:
-    - ruby
+    - rvm
 
 - name: Add RVM loading to bashrc for redmine_adm
   lineinfile: dest=~/.bashrc 
@@ -27,17 +26,21 @@
     regexp='^source $HOME/.rvm/scripts/rvm'
     line='source $HOME/.rvm/scripts/rvm'
   tags:
-    - ruby
+    - rvm
 
-- name: Add RVM loading to bashrc for redmine
+- name: Add RVM loading to bashrc for redmine user
   lineinfile: dest=~/.bashrc 
     insertbefore='^# If not running interactively' 
     regexp='^source $HOME/.rvm/scripts/rvm'
     line='source $HOME/.rvm/scripts/rvm'
-  sudo: yes
   sudo_user: redmine
   tags:
-    - ruby
+    - rvm
+
+- name: which rvm?
+  shell: "which rvm"
+  tags:
+   - whichrvm
 
 - name: Install Ruby
   shell: rvm install 2.0.0

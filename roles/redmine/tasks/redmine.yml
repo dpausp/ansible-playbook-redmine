@@ -1,68 +1,54 @@
 ---
-# These tasks installs redmine
-
-- name: install system packages required for redmine
-  apt: pkg={{ item }} state=present
-  sudo: yes
-  with_items:
-    - imagemagick
-    - libmagickwand-dev
-    - libxslt1-dev 
-    - libxml2-dev
-
-- name: install unzip
-  apt: pkg=unzip state=present
-  sudo: yes
-
-- name: install mercurial
-  apt: pkg=mercurial state=present
-  sudo: yes
-
-- name: clone redmine repository
-  git: repo=git://github.com/redmine/redmine.git dest={{ redmine_dir }} version=2.3-stable
-
-- name: set redmine repository permissions
-  file: dest={{ redmine_dir }} owner=redmine_adm group=redmine mode=755 recurse=yes state=directory 
-  sudo: yes
-  tags: 
-    - perms
-
-- name: create directories accessible by webserver / set permissions
-  file: path={{ redmine_dir }}/{{ item }} owner=redmine group=redmine_adm mode=2770 recurse=yes state=directory
-  with_items:
-    - public/plugin_assets
-    - log
-    - tmp
-    - files
-  sudo: yes
-  tags:
-    - perms
+# install redmine base
+# run as sudo redmine_adm
 
 - name: create database config file
   template: src=database.yml.j2 dest={{ redmine_dir }}/config/database.yml group=redmine mode=640
+  notify:
+    - restart redmine
 
-- name: remove nokogiri gem from Gemfile (problems with plugins)
-  lineinfile: dest={{ redmine_dir }}/Gemfile state=absent
-    regexp='^\s*gem .nokogiri.'
-  tags: noko
+- name: remove testing gems from Gemfile (problems with plugins)
+  lineinfile: dest={{ redmine_dir }}/Gemfile state=absent regexp='{{ item }}'
+  with_items:
+    - '^\s*gem .mocha.'
+    - '^\s*gem .nokogiri.'
+    - '^\s*gem .shoulda-matchers.'
+    - '^\s*gem .capybara.'
+    - '^\s*gem .selenium-webdriver.'
+  tags:
+    - testing
 
 - name: run redmine bundle update
   command: chdir={{ redmine_dir }} bundle update
+  notify:
+    - restart redmine
 
 - name: run redmine bundle install 
   command: chdir={{ redmine_dir }} bundle install --without test
+  notify:
+    - restart redmine
 
 - name: generate secret rails token
   command: chdir={{ redmine_dir }} rake generate_secret_token RAILS_ENV=production
 
 - name: migrate database
   command: chdir={{ redmine_dir }} rake db:migrate RAILS_ENV=production
+  notify:
+    - restart redmine
 
 - name: load default data
   command: chdir={{ redmine_dir }} 
     rake redmine:load_default_data REDMINE_LANG=de RAILS_ENV=production
   notify:
-    - restart nginx
+    - restart redmine
+
+- name: fix log permissions
+  file: name={{ redmine_dir }}/log/production.log owner=redmine state=file group=redmine_adm mode=0660 
+  sudo_user: root
+  tags:
+    - perms
+  notify:
+    - restart redmine
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

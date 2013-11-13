@@ -1,0 +1,6 @@
+---
+git_home: /srv/git
+gitolite_dir: "{{ git_home }}/gitolite"
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

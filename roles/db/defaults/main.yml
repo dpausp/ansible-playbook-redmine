@@ -1,0 +1,8 @@
+---
+# defaults for the DB role
+# if you want to override this variables, do it in group_vars/all
+redmine_db_name: redmine # also defined in role defauls for redmine
+redmine_db_user: redmine # also defined in role defaults for redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

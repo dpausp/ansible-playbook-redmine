@@ -4,3 +4,4 @@ gitolite_admin_key.pub
 secret_passwords.yml
 hosts
 ansible.sqlite
+group_vars/*

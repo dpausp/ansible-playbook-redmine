@@ -1,0 +1,18 @@
+---
+# default settings for the redmine installation. 
+# To override settings from here, you can add an entry to group_vars/redmine_server, for example.
+
+http_port: 80
+https_port: 443
+user_redmine_pubkeyfile: redmine_key.pub
+redmine_dir: /srv/redmine/redmine
+ssl_cert_filename: /etc/ssl/certs/ssl-cert-snakeoil.pem # uses self signed debian cert!
+ssl_cert_key_filename: /etc/ssl/private/ssl-cert-snakeoil.key # uses self signed debian cert!
+ssl_old_protocols: "SSLv3" # TLS is always on, leave string empty to use TLS only. SSLv3 may be added.
+always_reinstall_nginx: no # no keeps an existing nginx install
+
+# if you override this variables, do it in group_vars/all
+redmine_db_name: redmine # also defined in role defauls for db
+redmine_db_user: redmine # also defined in role defaults for db
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

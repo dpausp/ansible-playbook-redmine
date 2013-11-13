@@ -1,22 +1,22 @@
 ---
-# Installation von Nginx
+# install nginx with passenge
+# run as sudo redmine_adm
 
-#- name: Install prerequisites for RVM
-#  apt: pkg={{ item }} state=present
-#  with_items:
-#   - curl
+- name: which gem
+  shell: which gem
 
 - name: install nginx-passenger prerequisites
   apt: pkg={{ item }} state=present
-  sudo: yes
+  sudo_user: root
   with_items:
     - libcurl4-openssl-dev
 
 - name: install builder gem
-  gem: name=builder state=latest
+  gem: name=builder state=latest user_install=no
 
 - name: install passenger gem
-  gem: name=passenger state=latest
+  gem: name=passenger state=latest user_install=no
+  register: pv_out
 
 - name: get installed ruby version
   shell: rvm current
@@ -24,13 +24,13 @@
   tags:
     - cf
 
-- name: get installed passenger version
-  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1 | cut -d ',' -f 1
-  register: pv_out
-  tags:
-    - cf
+#- name: get installed passenger version
+#  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1 | cut -d ',' -f 1
+#  register: pv_out
+#  tags:
+#    - cf
 
-- set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.stdout }}
+- set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.version }}
   tags:
     - cf
 
@@ -54,19 +54,19 @@
 
 - name: copy init script
   copy: src=nginx dest=/etc/init.d/ owner=root group=root mode=0755
-  sudo: yes
+  sudo_user: root
   tags:
     - cf
 
 - name: run Nginx on boot
   service: "name=nginx enabled=yes"
-  sudo: yes
+  sudo_user: root
   tags:
     - cf
 
 - name: start Nginx
   service: "name=nginx state=started"
-  sudo: yes
+  sudo_user: root
   tags:
     - cf
 

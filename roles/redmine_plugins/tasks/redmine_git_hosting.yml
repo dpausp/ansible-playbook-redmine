@@ -9,36 +9,36 @@
 
 - name: install system ruby for redmine_git_hosting plugin hook
   apt: pkg=ruby state=present
-  sudo: yes
+  sudo_user: root
 
 - name: setup sudoers for redmine -> git
   lineinfile: dest=/etc/sudoers state=present
     regexp='^redmine ALL=[(]git[)]' 
     line='redmine ALL=(git) NOPASSWD:ALL' 
-  sudo: yes
+  sudo_user: root
 
 - name: setup sudoers for redmine_adm -> git
   lineinfile: dest=/etc/sudoers state=present
     regexp='^redmine_adm ALL=[(]git[)]' 
     line='redmine_adm ALL=(git) NOPASSWD:ALL' 
-  sudo: yes
+  sudo_user: root
 
 - name: setup sudoers for git -> redmine
   lineinfile: dest=/etc/sudoers state=present
     regexp='^git ALL=[(]redmine[)]'
     line='git ALL=(redmine) NOPASSWD:ALL' 
-  sudo: yes
+  sudo_user: root
 
 - name: copy over public key for gitolite administration
   copy: src=gitolite_admin_key.pub dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine
-  sudo: yes
+  sudo_user: root
 
 - name: copy over private key for gitolite administration
   copy: src=gitolite_admin_key dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine
-  sudo: yes
+  sudo_user: root
 
 - name: copy post-receive hook
-  sudo: yes
+  sudo_user: root
   copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
 
 - name: clone plugin repository
@@ -93,12 +93,12 @@
 
 - name: <plugdir>/bin must be writable for redmine
   file: dest={{ pdir }}/bin/ state=directory owner=redmine group=redmine mode=2770
-  sudo: yes
+  sudo_user: root
   tags: dir
 
 - name: fix permissions in <plugdir>/bin
   file: dest={{ pdir }}/bin/{{ item }} state=file owner=redmine group=redmine mode=755
-  sudo: yes
+  sudo_user: root
   with_items:
     - run_git_cmd_as_gitolite_user
     - gitolite_admin_ssh
@@ -108,12 +108,12 @@
   ignore_errors: yes
 
 - name: create tmp dir for plugin
-  sudo: yes
+  sudo_user: root
   file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
 
 - name: fix permissions for logfile
-  file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=755
-  sudo: yes
+  file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=750
+  sudo_user: root
 
 - name: process version change
   command: chdir={{ redmine_dir }} rake redmine:plugins:process_version_change RAILS_ENV=production

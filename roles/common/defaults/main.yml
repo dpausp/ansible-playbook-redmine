@@ -1,0 +1,7 @@
+---
+# default settings for common stuff.
+# To override settings from here, you can add an entry to group_vars/all, for example.
+ntpserver: pool.ntp.org
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

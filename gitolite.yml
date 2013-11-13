@@ -1,14 +1,4 @@
 ---
-- name: git user
-  hosts: git_server
-  user: root
-  tasks:
-  - name: create git user
-    user: name=git shell=/bin/bash state=present home=/srv/git
-
-  - name: prepare .ssh dir
-    file: path=/srv/git/.ssh/ owner=git group=git state=directory
-
 - name: deploy gitolite
   hosts: git_server
   user: root

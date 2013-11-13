@@ -1,0 +1,38 @@
+---
+# preparation tasks for redmine
+# run as sudo root
+
+- name: install system packages required for redmine
+  apt: pkg={{ item }} state=present
+  with_items:
+    - imagemagick
+    - libmagickwand-dev
+    - libxslt1-dev 
+    - libxml2-dev
+
+- name: install unzip
+  apt: pkg=unzip state=present
+
+- name: install mercurial
+  apt: pkg=mercurial state=present
+
+- name: clone redmine repository
+  git: repo=git://github.com/redmine/redmine.git dest={{ redmine_dir }} version=2.3-stable
+
+- name: set redmine repository permissions
+  file: dest={{ redmine_dir }} owner=redmine_adm group=redmine mode=755 recurse=yes state=directory 
+  tags: 
+    - perms
+
+- name: create directories accessible by webserver / set permissions
+  file: path={{ redmine_dir }}/{{ item }} owner=redmine group=redmine_adm mode=2770 recurse=yes state=directory
+  with_items:
+    - public/plugin_assets
+    - log
+    - tmp
+    - files
+  tags:
+    - perms
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
