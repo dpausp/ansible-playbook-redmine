@@ -15,7 +15,7 @@
     - rvm
 
 - name: create RVM link for redmine
-  file: dest=/srv/redmine/.rvm src=/home/redmine_adm/.rvm state=link
+  file: dest={{ redmine_home }}/.rvm src=/home/redmine_adm/.rvm state=link
   sudo_user: redmine
   tags:
     - rvm

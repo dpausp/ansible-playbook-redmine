@@ -36,19 +36,19 @@
 
 - name: install nginx
   shell: 
-    creates=/srv/redmine/nginx/sbin/nginx   
+    creates={{ nginx_dir }}/sbin/nginx   
     ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
-    --auto-download --prefix=/srv/redmine/nginx --auto
+    --auto-download --prefix={{ nginx_dir }} --auto
   when: not always_reinstall_nginx
 
 - name: (re-)install nginx
   shell: 
     ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
-    --auto-download --prefix=/srv/redmine/nginx --auto
+    --auto-download --prefix={{ nginx_dir }} --auto
   when: always_reinstall_nginx
 
 - name: setup nginx configuration file
-  template: src=nginx.conf.j2 dest=/srv/redmine/nginx/conf/nginx.conf
+  template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
   tags:
     - cf
 
@@ -59,13 +59,13 @@
     - cf
 
 - name: run Nginx on boot
-  service: "name=nginx enabled=yes"
+  service: name=nginx enabled=yes
   sudo_user: root
   tags:
     - cf
 
-- name: start Nginx
-  service: "name=nginx state=started"
+- name: (re)start Nginx
+  service: name=nginx state=restarted
   sudo_user: root
   tags:
     - cf
