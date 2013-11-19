@@ -42,9 +42,17 @@
   copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
 
 - name: clone plugin repository
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=54d9fd6384f839db2df dest={{ pdir }}
+  #git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=54d9fd6384f839db2df dest={{ pdir }}
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ pdir }}
   notify:
     - fix permissions
+
+- name: create logfile
+  command: touch {{ redmine_dir }}/log/git_hosting.log
+
+- name: fix permissions for logfile
+  file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=770
+  sudo_user: root
 
 - meta: flush_handlers
 
@@ -73,6 +81,11 @@
   lineinfile: dest={{ pdir }}/init.rb state=present
     line="      :gitolite_ssh_private_key      => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa',"
     regexp="^\s*:gitolite_ssh_private_key"
+
+- name: don't kill our custom hook when plugin configuration is changed
+  lineinfile: dest={{ pdir }}/init.rb state=present
+    line="      :gitolite_force_hooks_update      => false,"
+    regexp="^\s*:gitolite_force_hooks_update"
 
 - name: fix gitolite pubkey path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
@@ -111,11 +124,8 @@
   sudo_user: root
   file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
 
-- name: fix permissions for logfile
-  file: dest={{ redmine_dir }}/log/git_hosting.log state=file owner=redmine group=redmine mode=750
-  sudo_user: root
-
 - name: process version change
   command: chdir={{ redmine_dir }} rake redmine:plugins:process_version_change RAILS_ENV=production
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

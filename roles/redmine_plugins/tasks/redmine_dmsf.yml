@@ -12,19 +12,19 @@
   ignore_errors: yes
 
 - name: get and unpack xapian-full gem
-  shell: chdir=/dev/shm gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
+  shell: chdir=/tmp gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
   when: xapian_present
 
 - name: get patch for xapian
-  get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/dev/shm/4.patch
+  get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/tmp/4.patch
   when: xapian_present|failed
 
 - name: patch xapian-full
-  shell: chdir=/dev/shm/xapian-full-1.2.3 patch < ../4.patch
+  shell: chdir=/tmp/xapian-full-1.2.3 patch < ../4.patch
   when: xapian_present|failed
 
 - name: build & install xapian-full
-  shell: chdir=/dev/shm/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
+  shell: chdir=/tmp/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
   when: xapian_present|failed
 
 - name: clone plugin repository (redmine_dmsf)

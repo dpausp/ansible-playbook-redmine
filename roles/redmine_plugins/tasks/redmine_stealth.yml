@@ -1,9 +1,20 @@
 ---
 - name: set plugin dir (redmine_stealth)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_stealth
+  tags: fix
 
 - name: clone plugin repository
   git: repo=https://github.com/kotashiratsuka/redmine_stealth dest={{ pdir }}
+
+- name: temporary fix for current redmine / ruby version
+  lineinfile: dest={{ pdir }}/init.rb state=absent
+    regexp="{{ item }}"
+  with_items:
+   - "^\\s*plugin_locale_glob"
+   - "^\\s*File.join[(]"
+   - "^\\s*'redmine_stealth', 'config', 'locales'"
+   - "^\\s*::I18n.load_path"
+  tags: fix
   notify: 
    - fix permissions
    - restart redmine

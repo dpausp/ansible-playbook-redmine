@@ -11,7 +11,7 @@
 - include: redmine_knowledgebase.yml tags=redmine_knowledgebase
 - include: my_projects.yml tags=my_projects
 - include: redmine_theme_changer.yml tags=redmine_theme_changer
-- include: redmine_project_sections.yml tags=redmine_project_sections
+# - include: redmine_project_sections.yml tags=redmine_project_sections # unknown problems with redmine 2.4 or new ruby / rails
 - include: projects_tree_view.yml tags=projects_tree_view
 - include: sidebar.yml tags=sidebar
 - include: extended_fields.yml tags=extended_fields

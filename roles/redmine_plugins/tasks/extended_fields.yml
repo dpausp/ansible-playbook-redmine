@@ -14,5 +14,10 @@
     - run plugin migration
     - restart redmine
 
+- name: db function fix for newer ruby / redmine version
+  command: sed -i "s/STR_TO_DATE(#{CustomValue.table_name}.value, '%Y-%m-%d')/#{CustomValue.table_name}.value/g" {{ pdir }}/lib/extended_calendars_controller_patch.rb
+  tags:
+    - patch_extended_fields
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
