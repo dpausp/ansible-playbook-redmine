@@ -1,0 +1,116 @@
+---
+#remove redmine and gitolite from target host
+
+- name: remove redmine
+  hosts: redmine_server
+  user: root
+  vars_files:
+    - roles/redmine/defaults/main.yml
+  tasks:
+    - name: "**************************really kill everything installed for redmine?**********************************"
+      pause: seconds=10
+
+    - name: stop nginx and remove from default
+      service: name=nginx enabled=no state=stopped
+      ignore_errors: yes
+
+    - name: remove nginx init.d
+      file: path=/etc/init.d/nginx state=absent recurse=yes
+
+    - name: remove redmine home dir completely
+      file: path={{ redmine_home }} state=absent recurse=yes
+
+    - name: remove redmine_dir, if still left
+      file: path={{ redmine_dir }} state=absent recurse=yes
+  
+    - name: remove nginx_dir, if still left
+      file: path={{ nginx_dir }} state=absent recurse=yes
+  
+    - name: remove redmine_adm user dir completely
+      file: path=/home/redmine_adm state=absent recurse=yes
+
+    - name: remove redmine_git_hosting tmpdir
+      file: path=/tmp/redmine_git_hosting state=absent recurse=yes
+
+    - name: remove redmine_adm user
+      user: name=redmine_adm state=absent
+  
+    - name: remove redmine user
+      user: name=redmine state=absent
+  
+    - name: remove redmine_adm group
+      group: name=redmine_adm state=absent
+  
+    - name: remove redmine group
+      group: name=redmine state=absent
+
+
+- name: remove gitolite
+  hosts: redmine_server
+  user: root
+  vars_files:
+    - roles/gitolite/defaults/main.yml
+  tasks:
+    - name: stop git-daemon
+      service: name=git-daemon enabled=no state=stopped
+      ignore_errors: yes
+
+    - name: remove git_home dir completely
+      file: path={{ git_home }} state=absent recurse=yes
+
+    - name: remove gitolite_dir if still left
+      file: path={{ gitolite_dir }} state=absent recurse=yes
+
+    - name: remove start script link
+      file: path=/etc/init.d/git-daemon state=absent
+
+    - name: remove run script
+      file: path=/etc/sv/git-daemon/run
+
+    - name: remove git user
+      user: name=git state=absent
+  
+    - name: remove git group
+      group: name=git state=absent
+  
+
+- name: remove redmine database
+  hosts: db
+  user: root
+  sudo_user: postgres
+  sudo: yes
+  vars_files:
+    - roles/db/defaults/main.yml
+  tasks:
+    - name: remove database
+      postgresql_db: name={{ redmine_db_name }} state=absent
+
+    - name: remove db user
+      postgresql_db: name={{ redmine_db_user }} state=absent
+
+    - name: remove password access to redmine db
+      lineinfile: "dest=/etc/postgresql/9.1/main/pg_hba.conf state=absent
+        regexp='^local redmine redmine'"
+  
+    - name: reload postgres
+      service: name=postgresql state=reloaded
+
+- name: remove plugin specific stuff that is left
+  hosts: redmine_server
+  user: root
+  vars_files:
+    - roles/redmine/defaults/main.yml
+  tasks:
+    - name: remove sudoers for redmine -> git
+      lineinfile: dest=/etc/sudoers state=absent
+        regexp='^redmine ALL=[(]git[)]' 
+
+    - name: remove sudoers for redmine_adm -> git
+      lineinfile: dest=/etc/sudoers state=absent
+        regexp='^redmine_adm ALL=[(]git[)]' 
+
+    - name: remove sudoers for git -> redmine
+      lineinfile: dest=/etc/sudoers state=absent
+        regexp='^git ALL=[(]redmine[)]'
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
