@@ -7,14 +7,6 @@
 - name: clone gitolite repo
   git: repo=git://github.com/sitaramc/gitolite dest={{ gitolite_dir }}
 
-- name: fix gitolite update hook for HTTP access
-  lineinfile: "dest={{ git_home }}/bin/lib/Gitolite/Hooks/Update.pm state=present
-  regexp='^BEGIN { exit 0'
-  insertafter='^#!/usr/bin/perl'
-  line='BEGIN { exit 0 if exists $ENV{GL_BYPASS_UPDATE_HOOK}; }'"
-  tags:
-    - hookfix
-
 - name: make bin dir
   file: path=~/bin state=directory owner=git group=git
 
@@ -30,5 +22,13 @@
 
 - name: gitolite setup
   shell: ~/bin/gitolite setup -pk /dev/shm/gitolite_admin_key.pub
+
+- name: fix gitolite update hook for HTTP access
+  lineinfile: "dest={{ git_home }}/bin/lib/Gitolite/Hooks/Update.pm state=present
+  regexp='^BEGIN { exit 0'
+  insertafter='^#!/usr/bin/perl'
+  line='BEGIN { exit 0 if exists $ENV{GL_BYPASS_UPDATE_HOOK}; }'"
+  tags:
+    - hookfix
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
