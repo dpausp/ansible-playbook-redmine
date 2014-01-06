@@ -1,0 +1,13 @@
+---
+# install redmine_etherpad plugin, forked by PiratenBayernIT
+- name: set plugin dir (redmine_etherpad)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_etherpad
+
+- name: clone plugin repository
+  git: repo=https://github.com/PiratenBayernIT/redmine_etherpad dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
