@@ -29,6 +29,8 @@
 - include: redmine_contacts.yml tags=redmine_contacts
 - include: autowatch.yml tags=autowatch
 - include: redmine_dmsf.yml tags=redmine_dmsf
-
+# piratenbayernit plugins
+- include: redmine_piratenwiki.yml tags=redmine_piratenwiki
+- include: redmine_pirate_helpdesk.yml tags=redmine_pirate_helpdesk
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

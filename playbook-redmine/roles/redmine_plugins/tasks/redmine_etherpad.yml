@@ -4,7 +4,7 @@
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_etherpad
 
 - name: clone plugin repository
-  git: repo=https://github.com/PiratenBayernIT/redmine_etherpad dest={{ pdir }}
+  git: repo=https://github.com/PiratenBayernIT/redmine_etherpad version=piratenpad dest={{ pdir }}
   notify: 
    - fix permissions
    - restart redmine
