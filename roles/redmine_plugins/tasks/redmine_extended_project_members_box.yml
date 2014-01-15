@@ -1,0 +1,13 @@
+---
+# install redmine_extended_project_member_box plugin, created by PiratenBayernIT
+- name: set plugin dir (redmine_extended_project_member_box)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_extended_project_member_box
+
+- name: clone plugin repository
+  git: repo=https://github.com/PiratenBayernIT/redmine_extended_project_member_box dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

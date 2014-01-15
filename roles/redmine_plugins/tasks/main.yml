@@ -19,6 +19,10 @@
 - include: redmine_etherpad.yml tags=redmine_etherpad
 - include: redmine_hide_emails_by_default.yml tags=redmine_hide_emails_by_default
 - include: redmine_watchers_by_group.yml tags=redmine_watchers_by_group
+- include: redmine_extended_project_members_box.yml tags=redmine_extended_project_members_box
+- include: redmine_equipment_status_viewer.yml tags=redmine_equipment_status_viewer
+- include: redmine_ics_export.yml tags=redmine_ics_export
+- include: autowatch.yml tags=autowatch
 - include: redmine_dmsf.yml tags=redmine_dmsf
 
 
