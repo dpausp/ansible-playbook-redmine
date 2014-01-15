@@ -28,7 +28,7 @@
   when: xapian_present|failed
 
 - name: clone plugin repository (redmine_dmsf)
-  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }} version=1.4.7-devel
+  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }} version=devel-1.4.7
   notify: 
    - fix permissions
    - run bundle update

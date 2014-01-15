@@ -11,6 +11,9 @@
   with_items:
     - libcurl4-openssl-dev
 
+- name: install rake gem
+  gem: name=rake state=latest user_install=no
+
 - name: install builder gem
   gem: name=builder state=latest user_install=no
 
@@ -37,37 +40,38 @@
 - name: install nginx
   shell: 
     creates={{ nginx_dir }}/sbin/nginx   
-    ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
+    ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
   when: not always_reinstall_nginx
 
 - name: (re-)install nginx
   shell: 
-    ruby ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
+    ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
-  when: always_reinstall_nginx
 
 - name: setup nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
-  tags:
-    - cf
 
-- name: copy init script
-  copy: src=nginx dest=/etc/init.d/ owner=root group=root mode=0755
+- name: create nginx init script
+  template: src=nginx.j2 dest=/etc/init.d/nginx owner=root group=root mode=0755
   sudo_user: root
-  tags:
-    - cf
 
-- name: run Nginx on boot
+- name: run nginx on boot
   service: name=nginx enabled=yes
   sudo_user: root
-  tags:
-    - cf
 
-- name: (re)start Nginx
-  service: name=nginx state=restarted
+- name: stop nginx if running
+  service: name=nginx state=stopped
   sudo_user: root
-  tags:
-    - cf
+  ignore_errors: yes
+
+- name: kill leftover nginx
+  command: killall -9 nginx
+  sudo_user: root
+  ignore_errors: yes
+
+- name: start nginx
+  service: name=nginx state=started
+  sudo_user: root
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

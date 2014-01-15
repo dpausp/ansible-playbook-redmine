@@ -9,8 +9,14 @@
   tags:
     - rvm
 
+- name: get latest rvm script
+  get_url: url=https://get.rvm.io dest=~/rvm-installer
+
+- name: rvm script perms
+  file: path=~/rvm-installer mode=0755 state=file
+
 - name: Install RVM
-  script: roles/redmine/files/rvm-installer stable
+  shell: ~/rvm-installer stable
   tags: 
     - rvm
 
@@ -42,13 +48,18 @@
   tags:
    - whichrvm
 
-- name: Install Ruby
-  shell: rvm install 2.0.0
+- name: Install Ruby (2.1)
+  shell: rvm install 2.1.0
   tags:
     - ruby
 
-- name: set ruby 2.0 as default for redmine_adm
-  shell: rvm alias create default 2.0.0
+- name: use ruby 2.1
+  shell: rvm use 2.1.0
+  tags:
+    - ruby
+
+- name: set ruby 2.1 as default for redmine_adm
+  shell: rvm alias create default 2.1.0
   tags:
     - ruby
 

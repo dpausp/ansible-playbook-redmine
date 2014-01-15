@@ -45,5 +45,12 @@
 - include: redmine.yml
   sudo_user: redmine_adm
 
-
+- name: xmpp notify redmine finished
+  sudo: no
+  local_action: jabber 
+          user={{ xmpp_notify_user }}
+          password={{ xmpp_notify_password }}
+          to={{ xmpp_notify_to }}
+          msg="Redmine installation finished"
+  when: xmpp_notify_user is defined
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

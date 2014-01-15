@@ -20,6 +20,9 @@
 - name: install screen
   apt: pkg=screen state=present
 
+- name: install tmux
+  apt: pkg=tmux state=present
+
 - name: install git
   apt: pkg=git state=present
 
