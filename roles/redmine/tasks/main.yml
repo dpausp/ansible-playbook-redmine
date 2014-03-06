@@ -13,7 +13,7 @@
   group: name=redmine_adm state=present
 
 - name: create redmine_adm user
-  user: name=redmine_adm shell=/bin/bash group=redmine_adm groups=redmine,redmine_adm state=present
+  user: name=redmine_adm shell=/bin/bash group=redmine groups=redmine,redmine_adm state=present
 
 - name: fix redmine dir permissions
   file: dest=/srv/redmine mode=775 state=directory recurse=yes
