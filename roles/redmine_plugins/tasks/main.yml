@@ -27,6 +27,7 @@
 - include: redmine_startpage.yml tags=redmine_startpage
 - include: redmine_private_wiki.yml tags=redmine_private_wiki
 - include: redmine_ics_export.yml tags=redmine_ics_export
+- include: redmine_contacts.yml tags=redmine_contacts
 - include: autowatch.yml tags=autowatch
 - include: redmine_dmsf.yml tags=redmine_dmsf
 

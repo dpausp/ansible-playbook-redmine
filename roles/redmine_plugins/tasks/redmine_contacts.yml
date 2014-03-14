@@ -1,0 +1,14 @@
+---
+# install redmine_contacts plugin, forked by PiratenBayernIT
+- name: set plugin dir (redmine_contacts)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_contacts
+
+- name: clone plugin repository
+  git: repo=https://github.com/PiratenBayernIT/redmine_contacts version=3_2_12 dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - run bundle update
+   - run bundle install
+   - run plugin migration
+   - restart redmine
+
