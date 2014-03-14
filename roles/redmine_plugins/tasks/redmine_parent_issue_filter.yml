@@ -1,0 +1,12 @@
+---
+- name: set plugin dir (redmine_parent_issue_filter)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_parent_issue_filter
+
+- name: clone plugin repository
+  git: repo=https://github.com/onozaty/redmine-parent-issue-filter dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

@@ -1,0 +1,14 @@
+---
+- name: set plugin dir (redmine_private_wiki)
+  set_fact: pdir={{ redmine_dir }}/plugins/redmine_private_wiki
+
+- name: clone plugin repository
+  git: repo=https://github.com/f0y/redmine_private_wiki dest={{ pdir }}
+  notify: 
+   - fix permissions
+   - run bundle install
+   - run plugin migration
+   - restart redmine
+
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
