@@ -1,0 +1,74 @@
+" Press ? for help
+
+.. (up a dir)
+</tobixx0/coding/ansible/ansible-playbook-redmine/
+▸ group_vars/
+▾ roles/
+  ▸ common/
+  ▸ db/
+  ▸ gitolite/
+  ▾ redmine/
+    ▸ defaults/
+    ▸ files/
+    ▸ handlers/
+    ▾ tasks/
+        main.yml
+        nginx.yml
+        redmine.root.yml
+        redmine.yml
+        ruby.yml
+    ▸ templates/
+  ▾ redmine_plugins/
+    ▸ defaults/
+    ▸ files/
+    ▾ handlers/
+        main.yml
+    ▾ tasks/
+        autowatch.yml
+        dmsf_external_tools.yml
+        extended_fields.yml
+        main.yml
+        my_projects.yml
+        projects_tree_view.yml
+        redmine_auto_percent.yml
+        redmine_didyoumean.yml
+        redmine_dmsf.yml
+        redmine_equipment_status_viewer.yml
+        redmine_etherpad.yml
+        redmine_example_plugin.yml
+        redmine_extended_project_members_box.yml
+        redmine_favourite_projects.yml
+        redmine_git_hosting.yml
+        redmine_group_owners.yml
+        redmine_hide_emails_by_default.yml
+        redmine_ics_export.yml
+        redmine_issue_checklist.yml
+        redmine_knowledgebase.yml
+        redmine_lightbox.yml
+        redmine_mylyn_connector.yml
+        redmine_parent_issue_filter.yml
+        redmine_per_project_formatting.yml
+        redmine_plugin_views_revisions.yml
+        redmine_private_wiki.yml
+        redmine_project_sections.yml
+        redmine_startpage.yml
+        redmine_stealth.yml
+        redmine_theme_changer.yml
+        redmine_watchers_by_group.yml
+        redmine_wiki_extensions.yml
+        sidebar.yml
+    ▸ templates/
+  clean.yml
+  database.yml
+  gitolite.yml
+  gitolite_admin_key
+  gitolite_admin_key.pub
+  hosts
+  hosts.example
+  README.md
+  redmine.yml
+  redmine_key.pub
+  redmine_plugins.yml
+  secret_passwords.yml
+  secret_passwords.yml.example
+  site.yml
