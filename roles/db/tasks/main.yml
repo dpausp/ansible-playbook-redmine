@@ -16,8 +16,11 @@
     line='local redmine redmine md5# inserted by ansible-playbook-redmine-git'"
   notify: restart Postgres
 
+- name: start postgres service
+  service: name=postgresql state=started
+
 - name: start postgres service on boot
-  service: name=postgresql state=started enabled=true
+  service: name=postgresql enabled=true
 
 - name: Install python-psycopg2
   apt: pkg=python-psycopg2 state=present

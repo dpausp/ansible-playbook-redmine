@@ -8,7 +8,7 @@
   command: chdir={{ redmine_dir }} bundle install --without test
 
 - name: fix permissions
-  file: dest={{ pdir }} state=directory group=redmine mode=750
+  file: dest={{ pdir }} state=directory owner=redmine_adm group=redmine mode=750
   sudo: yes
   sudo_user: root
 

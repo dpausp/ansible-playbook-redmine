@@ -1,7 +1,7 @@
 # install some redmine plugins. Separate plugins can be installed by specifying their names as tags.
 ---
 - include: redmine_git_hosting.yml tags=redmine_git_hosting
-- include: redmine_didyoumean.yml tags=redmine_didyoumean
+# - include: redmine_didyoumean.yml tags=redmine_didyoumean
 - include: redmine_stealth.yml tags=redmine_stealth
 - include: redmine_auto_percent.yml tags=redmine_auto_percent
 - include: redmine_issue_checklist.yml tags=redmine_issue_checklist
@@ -14,7 +14,6 @@
 # - include: redmine_project_sections.yml tags=redmine_project_sections # unknown problems with redmine 2.4 or new ruby / rails
 - include: projects_tree_view.yml tags=projects_tree_view
 - include: sidebar.yml tags=sidebar
-- include: extended_fields.yml tags=extended_fields
 - include: redmine_favourite_projects.yml tags=redmine_favourite_projects
 - include: redmine_etherpad.yml tags=redmine_etherpad
 - include: redmine_hide_emails_by_default.yml tags=redmine_hide_emails_by_default

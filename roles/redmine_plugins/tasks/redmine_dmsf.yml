@@ -6,29 +6,30 @@
   apt: pkg=uuid-dev state=present
   sudo_user: root
 
-- name: find out if xapian-full gem is installed
-  shell: gem list | grep xapian
-  register: xapian_present
-  ignore_errors: yes
+#- name: find out if xapian-full gem is installed
+#  shell: gem list | grep xapian
+#  register: xapian_present
+#  ignore_errors: yes
+#
+#- name: get and unpack xapian-full gem
+#  shell: chdir=/tmp gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
+#  when: xapian_present|failed
+#
+#- name: get patch for xapian
+#  get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/tmp/4.patch
+#  when: xapian_present|failed
+#
+#- name: patch xapian-full
+#  shell: chdir=/tmp/xapian-full-1.2.3 patch < ../4.patch
+#  when: xapian_present|failed
+#
+#- name: build & install xapian-full
+#  shell: chdir=/tmp/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
+#  when: xapian_present|failed
 
-- name: get and unpack xapian-full gem
-  shell: chdir=/tmp gem fetch xapian-full && gem unpack xapian-full-1.2.3.gem
-  when: xapian_present
-
-- name: get patch for xapian
-  get_url: url=https://github.com/rlane/xapian-full/pull/4.patch dest=/tmp/4.patch
-  when: xapian_present|failed
-
-- name: patch xapian-full
-  shell: chdir=/tmp/xapian-full-1.2.3 patch < ../4.patch
-  when: xapian_present|failed
-
-- name: build & install xapian-full
-  shell: chdir=/tmp/xapian-full-1.2.3 gem build xapian-full.gemspec && gem install ./xapian-full-1.2.3.gem
-  when: xapian_present|failed
 
 - name: clone plugin repository (redmine_dmsf)
-  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }} version=devel-1.4.7
+  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }}  version=devel-1.4.8
   notify: 
    - fix permissions
    - run bundle update
@@ -36,5 +37,16 @@
    - run plugin migration
    - restart redmine
 
+- name: patch dmsf boolean fail
+  lineinfile: dest={{ pdir }}/app/models/dmsf_link.rb
+    line="  scope :visible, :conditions => 'deleted = false'"
+    regexp="  scope :visible, :conditions => 'deleted = 0'"
+    state=present
+
+- name: fix xapian dep
+  lineinfile: dest={{ pdir }}/Gemfile
+    line="gem 'xapian-full-alaveteli', :require => false"
+    regexp="^\s*gem .xapian-full"
+    state=present
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
