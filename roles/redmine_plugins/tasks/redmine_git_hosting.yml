@@ -11,6 +11,10 @@
   apt: pkg=ruby state=present
   sudo_user: root
 
+- name: install libicu-dev
+  apt: pkg=libicu-dev state=present
+  sudo_user: root
+
 - name: setup sudoers for redmine -> git
   lineinfile: dest=/etc/sudoers state=present
     regexp='^redmine ALL=[(]git[)]' 
@@ -43,7 +47,8 @@
 
 - name: clone plugin repository
   #git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=54d9fd6384f839db2df dest={{ pdir }}
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git dest={{ pdir }}
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=v0.6 dest={{ pdir }}
+  #sudo_user: root
   notify:
     - fix permissions
 
