@@ -8,7 +8,7 @@
     - common
 
 - include: database.yml
-- include: gitolite.yml
+- include: gitolite.yml tags=gitolite
 - include: redmine.yml
 - include: redmine_plugins.yml
 

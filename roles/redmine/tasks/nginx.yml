@@ -48,6 +48,7 @@
   shell: 
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
+  when: always_reinstall_nginx
 
 - name: setup nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
