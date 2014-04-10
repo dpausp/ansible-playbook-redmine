@@ -16,8 +16,8 @@
 - name: install mercurial
   apt: pkg=mercurial state=present
 
-- name: clone redmine repository (2.5.0)
-  git: repo=https://github.com/redmine/redmine dest={{ redmine_dir }} version=2.5.0
+- name: clone redmine repository (2.5.1)
+  git: repo=https://github.com/redmine/redmine dest={{ redmine_dir }} version=2.5.1
 
 - name: set redmine repository permissions
   file: dest={{ redmine_dir }} owner=redmine_adm group=redmine mode=755 recurse=yes state=directory 
