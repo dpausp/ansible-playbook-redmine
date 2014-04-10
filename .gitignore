@@ -4,4 +4,5 @@ gitolite_admin_key.pub
 secret_passwords.yml
 hosts
 ansible.sqlite
-group_vars/*
+playbook_redmine/group_vars/*
+.vagrant
