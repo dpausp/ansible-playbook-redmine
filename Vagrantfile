@@ -30,6 +30,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # => https://github.com/mitchellh/vagrant/issues/1172
   config.vm.provision :shell, inline: $script
 
+  # all inclusive version, usable even on windows...
+  config.vm.define "inabox", primary: true do |guest|
+      ansible_command = "ANSIBLE_SUDO_FLAGS=-i ansible-playbook -i /vagrant/ansible-hosts-inabox -c local /vagrant/playbook-redmine/site.yml"
+      va_verbose = ENV["VA_VERBOSE"]
+      if va_verbose
+          ansible_command += " -" + va_verbose
+      end
+      guest.vm.provision "shell", keep_color: true, path: "setup-ansible.sh"
+      guest.vm.provision "shell", keep_color: true, privileged: false, inline: ansible_command
+  end
+
+
   config.vm.define "ext", primary: true do |guest|
     guest.vm.provision :ansible do |ansible|
       ansible.playbook = "playbook-redmine/site.yml"
