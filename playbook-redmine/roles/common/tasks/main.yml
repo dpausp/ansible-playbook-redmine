@@ -2,7 +2,7 @@
 # This playbook contains common plays that will be run on all nodes.
 
 - name: apt-get update
-  apt: update_cache=yes
+  apt: update_cache=yes cache_valid_time=1800
 
 - name: install ntp 
   apt: pkg=ntp state=present
@@ -25,6 +25,12 @@
 
 - name: install tmux
   apt: pkg=tmux state=present
+
+- name: install vim
+  apt: pkg=vim-nox state=present
+
+- name: install htop
+  apt: pkg=htop state=present
 
 - name: install git
   apt: pkg=git state=present

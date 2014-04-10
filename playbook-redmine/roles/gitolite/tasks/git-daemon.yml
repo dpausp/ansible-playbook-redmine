@@ -1,5 +1,5 @@
 ---
-# install git-daemon (tasks executed as root)
+# install git-daemon (tasks executed as sudo root)
 
 - name: install git-daemon-run package
   apt: pkg=git-daemon-run state=present
@@ -23,8 +23,8 @@
   ignore_errors: yes
   register: success
 
-- name: wait 2 seconds ...
-  pause: seconds=1
+- name: wait 5 seconds ...
+  pause: seconds=5
   when: success|failed
 
 - name: (re)start git-daemon service (try again)
