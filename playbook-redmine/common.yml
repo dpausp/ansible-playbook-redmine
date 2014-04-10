@@ -1,8 +1,8 @@
 ---
-- name: deploy gitolite
-  hosts: git_server
+- name: apply common configuration to all nodes
+  hosts: all
   sudo: yes
   roles:
-    - gitolite
+    - common
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

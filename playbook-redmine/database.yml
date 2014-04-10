@@ -1,7 +1,7 @@
 ---
 - name: deploy PostgreSQL
   hosts: db
-  user: root
+  sudo: yes
   vars_files:
     - secret_passwords.yml
   roles:

@@ -1,7 +1,6 @@
 ---
 - name: deploy Redmine plugins
   hosts: redmine_server
-  user: root
   sudo: yes
   sudo_user: redmine_adm
   roles:

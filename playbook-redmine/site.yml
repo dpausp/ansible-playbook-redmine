@@ -1,15 +1,10 @@
 ---
 # This playbook deploys the whole application stack in this site.  
 
-- name: apply common configuration to all nodes
-  hosts: all
-  user: root
-  roles:
-    - common
-
-- include: database.yml
+- include: common.yml
+- include: database.yml tags=database
 - include: gitolite.yml tags=gitolite
 - include: redmine.yml
-- include: redmine_plugins.yml
+- include: redmine_plugins.yml tags=redmine_plugins
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
