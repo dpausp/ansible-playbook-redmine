@@ -8,5 +8,10 @@
    - fix permissions
    - restart redmine
 
+- name: apply hack for newer redmine versions
+  copy: src=group_owners_patches.rb dest={{ pdir }}/lib/
+  notify:
+   - restart redmine
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
