@@ -7,6 +7,18 @@
   notify:
     - restart redmine
 
+- name: create configuration.yml.d directory
+  file: path={{ redmine_dir }}/config/configuration.yml.d state=directory
+
+- name: create mailconfig if available
+  template: src=mailconfig.yml.j2 dest={{ redmine_dir }}/config/configuration.yml.d/mailconfig.yml
+  ignore_errors: yes
+
+- name: assemble configuration.yml
+  assemble: remote_src=yes mode=0640
+    src={{ redmine_dir }}/config/configuration.yml.d/
+    dest={{ redmine_dir }}/config/configuration.yml
+
 - name: remove testing gems from Gemfile (problems with plugins)
   lineinfile: dest={{ redmine_dir }}/Gemfile state=absent regexp='{{ item }}'
   with_items:

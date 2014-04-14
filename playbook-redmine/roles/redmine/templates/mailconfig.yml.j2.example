@@ -1,0 +1,72 @@
+# == Outgoing email settings (email_delivery setting)
+#
+# === Common configurations
+#
+# ==== Sendmail command
+#
+# production:
+#   email_delivery:
+#     delivery_method: :sendmail
+#
+# ==== Simple SMTP server at localhost
+#
+# production:
+#   email_delivery:
+#     delivery_method: :smtp
+#     smtp_settings:
+#       address: "localhost"
+#       port: 25
+#
+# ==== SMTP server at example.com using LOGIN authentication and checking HELO for foo.com
+#
+# production:
+#   email_delivery:
+#     delivery_method: :smtp
+#     smtp_settings:
+#       address: "example.com"
+#       port: 25
+#       authentication: :login
+#       domain: 'foo.com'
+#       user_name: 'myaccount'
+#       password: 'password'
+#
+# ==== SMTP server at example.com using PLAIN authentication
+#
+# production:
+#   email_delivery:
+#     delivery_method: :smtp
+#     smtp_settings:
+#       address: "example.com"
+#       port: 25
+#       authentication: :plain
+#       domain: 'example.com'
+#       user_name: 'myaccount'
+#       password: 'password'
+#
+# ==== SMTP server at using TLS (GMail)
+#
+# This might require some additional configuration. See the guides at:
+# http://www.redmine.org/projects/redmine/wiki/EmailConfiguration
+#
+# production:
+#   email_delivery:
+#     delivery_method: :smtp
+#     smtp_settings:
+#       enable_starttls_auto: true
+#       address: "smtp.gmail.com"
+#       port: 587
+#       domain: "smtp.gmail.com" # 'your.domain.com' for GoogleApps
+#       authentication: :plain
+#       user_name: "your_email@gmail.com"
+#       password: "your_password"
+#
+#
+# === More configuration options
+#
+# See the "Configuration options" at the following website for a list of the
+# full options allowed:
+#
+# http://wiki.rubyonrails.org/rails/pages/HowToSendEmailsWithActionMailer
+
+
+
