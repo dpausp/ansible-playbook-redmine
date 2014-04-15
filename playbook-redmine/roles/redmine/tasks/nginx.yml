@@ -33,6 +33,7 @@
 #  tags:
 #    - cf
 
+# register vars which will be used by the nginx (+passenger) installation
 - set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.version }}
   tags:
     - cf
@@ -43,36 +44,42 @@
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
   when: not always_reinstall_nginx
+  notify: restart nginx
 
 - name: (re-)install nginx
   shell: 
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
-  when: always_reinstall_nginx
+  when: always_reinstall_nginx or pv_out|changed
+  notify: restart nginx
 
 - name: setup nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
+  notify: restart nginx
 
-- name: create nginx init script
-  template: src=nginx.j2 dest=/etc/init.d/nginx owner=root group=root mode=0755
+- name: add redmine admin to supervisor group
+  user: name=redmine_adm groups=supervisor state=present append=true
   sudo_user: root
 
-- name: run nginx on boot
-  service: name=nginx enabled=yes
+- name: create supervisor redmine-nginx process config file
+  template: src=redmine-nginx.conf.j2 dest=/etc/supervisor/conf.d/redmine-nginx.conf
+  notify: restart supervisor
   sudo_user: root
-
-- name: stop nginx if running
-  service: name=nginx state=stopped
-  sudo_user: root
-  ignore_errors: yes
 
 - name: kill leftover nginx
-  command: killall -9 nginx
+  command: killall nginx
   sudo_user: root
   ignore_errors: yes
 
-- name: start nginx
-  service: name=nginx state=started
+- name: wait 5 seconds ...
+  pause: seconds=5
+
+- name: kill -9 leftover nginx
+  command: killall nginx
   sudo_user: root
+  ignore_errors: yes
+
+# run pending nginx restart handler
+- meta: flush_handlers
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

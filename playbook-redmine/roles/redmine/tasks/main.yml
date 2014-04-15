@@ -37,6 +37,9 @@
 - include: ruby.yml
   sudo_user: redmine_adm
 
+- include: supervisor.yml
+  sudo_user: root
+
 - include: nginx.yml
   sudo_user: redmine_adm
 
@@ -53,4 +56,5 @@
           to={{ xmpp_notify_to }}
           msg="Redmine installation finished"
   when: xmpp_notify_user is defined
+
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:
