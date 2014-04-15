@@ -18,7 +18,7 @@ ssl_certificate: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.crt"
 ssl_certificate_key: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.key"
 ssl_local_dhparam_file: # dhparam file will be generated on target host if nothing is given here
 #ssl_trusted_certificate is used for OCSP stapling and contains the intermediate CA certificates + root CA
-ssl_trusted_certificate: 
+ssl_trusted_certificate:
 nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change it to your favorite DNS server
 
 ### redmine db settings
