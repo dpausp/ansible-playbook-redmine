@@ -53,6 +53,21 @@
   when: always_reinstall_nginx or pv_out|changed
   notify: restart nginx
 
+- name: copy dhparam file
+  copy: src={{ nginx_dhparam_file }} dest={{ nginx_dir }}/conf/dhparam
+  when: nginx_dhparam_file
+
+- name: create dhparam
+  command: creates={{ nginx_dir }}/conf/dhparam
+    openssl dhparam -out {{ nginx_dir }}/conf/dhparam 2048
+
+- name: setup nginx configuration files
+  template: src={{ item }}.j2 dest={{ nginx_dir }}/conf/{{ item }}
+  with_items: 
+    - nginx.conf
+    - ssl_params
+  notify: restart nginx
+
 - name: setup nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
   notify: restart nginx

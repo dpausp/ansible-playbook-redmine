@@ -8,9 +8,9 @@ user_redmine_pubkeyfile: redmine_key.pub
 redmine_home: /srv/redmine
 redmine_dir: "{{ redmine_home }}/redmine"
 nginx_dir: "{{ redmine_home }}/nginx"
+nginx_dhparam_file: # will be generated if nothing is given here
 ssl_cert_filename: /etc/ssl/certs/ssl-cert-snakeoil.pem # uses self signed debian cert!
 ssl_cert_key_filename: /etc/ssl/private/ssl-cert-snakeoil.key # uses self signed debian cert!
-ssl_old_protocols: "SSLv3" # TLS is always on, leave string empty to use TLS only. SSLv3 may be added.
 always_reinstall_nginx: no # no keeps an existing nginx install
 server_name: "{{ ansible_fqdn }}" # defaults to fqdn, used by nginx; also defined in role defaults for redmine
 
