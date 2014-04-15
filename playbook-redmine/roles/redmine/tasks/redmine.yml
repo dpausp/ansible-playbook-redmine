@@ -42,17 +42,6 @@
   tags: 
     - redmine_configuration
 
-- name: remove testing gems from Gemfile (problems with plugins)
-  lineinfile: dest={{ redmine_dir }}/Gemfile state=absent regexp='{{ item }}'
-  with_items:
-    - '^\s*gem .mocha.'
-    - '^\s*gem .nokogiri.'
-    - '^\s*gem .shoulda-matchers.'
-    - '^\s*gem .capybara.'
-    - '^\s*gem .selenium-webdriver.'
-  tags:
-    - testing
-
 - name: run redmine bundle update
   command: chdir={{ redmine_dir }} bundle update
   notify:
