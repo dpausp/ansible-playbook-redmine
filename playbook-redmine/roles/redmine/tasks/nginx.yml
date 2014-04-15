@@ -54,8 +54,8 @@
   notify: restart nginx
 
 - name: copy dhparam file
-  copy: src={{ nginx_dhparam_file }} dest={{ nginx_dir }}/conf/dhparam
-  when: nginx_dhparam_file
+  copy: src={{ ssl_dhparam_file }} dest={{ nginx_dir }}/conf/dhparam
+  when: ssl_local_dhparam_file
 
 - name: create dhparam
   command: creates={{ nginx_dir }}/conf/dhparam
@@ -67,6 +67,11 @@
     - nginx.conf
     - ssl_params
   notify: restart nginx
+
+- name: generate self signed certificate
+  command: "creates={{ ssl_certificate }} openssl req -x509 -nodes -days 365 -subj /CN={{ server_name }} -newkey rsa:2048 \ 
+    -keyout {{ ssl_certificate_key }} -out {{ ssl_certificate }}"
+  when: ssl_create_self_signed_cert
 
 - name: setup nginx configuration file
   template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf

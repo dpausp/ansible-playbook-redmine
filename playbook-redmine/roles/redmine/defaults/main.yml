@@ -1,21 +1,28 @@
 ---
-# default settings for the redmine installation. 
+##### role defaults redmine
 # To override settings from here, you can add an entry to group_vars/redmine_server, for example.
-
-http_port: 80
-https_port: 443
 user_redmine_pubkeyfile: redmine_key.pub
 redmine_home: /srv/redmine
 redmine_dir: "{{ redmine_home }}/redmine"
+
+### nginx settings
+http_port: 80
+https_port: 443
 nginx_dir: "{{ redmine_home }}/nginx"
-nginx_dhparam_file: # will be generated if nothing is given here
-ssl_cert_filename: /etc/ssl/certs/ssl-cert-snakeoil.pem # uses self signed debian cert!
-ssl_cert_key_filename: /etc/ssl/private/ssl-cert-snakeoil.key # uses self signed debian cert!
 always_reinstall_nginx: no # no keeps an existing nginx install
 server_name: "{{ ansible_fqdn }}" # defaults to fqdn, used by nginx; also defined in role defaults for redmine
 
+### nginx ssl settings
+ssl_create_self_signed_cert: yes # self signed cert and key will be generated if ssl_cert_filename doesn't exist
+ssl_certificate: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.crt"
+ssl_certificate_key: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.key"
+ssl_local_dhparam_file: # dhparam file will be generated on target host if nothing is given here
+#ssl_trusted_certificate is used for OCSP stapling and contains the intermediate CA certificates + root CA
+ssl_trusted_certificate: 
+nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change it to your favorite DNS server
 
-# if you override this variables, do it in group_vars/all
+### redmine db settings
+# if you'd like to override these variables (good idea!), do it in group_vars/all or connecting to the DB will fail
 redmine_db_name: redmine # also defined in role defauls for db
 redmine_db_user: redmine # also defined in role defaults for db
 
