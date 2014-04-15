@@ -6,3 +6,4 @@ hosts
 ansible.sqlite
 playbook_redmine/group_vars/*
 .vagrant
+config_env_*.yml.j2
