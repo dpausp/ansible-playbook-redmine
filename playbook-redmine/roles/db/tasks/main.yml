@@ -26,12 +26,10 @@
   apt: pkg=python-psycopg2 state=present
 
 - name: Create Redmine DB User
-  sudo: yes
   sudo_user: postgres
   postgresql_user: name={{ redmine_db_user }} password={{ redmine_db_pass }} state=present
 
 - name: Create Redmine Database
-  sudo: yes
   sudo_user: postgres
   postgresql_db: name={{ redmine_db_name }} owner={{ redmine_db_user }} encoding=UTF8 template=template0 state=present
 
