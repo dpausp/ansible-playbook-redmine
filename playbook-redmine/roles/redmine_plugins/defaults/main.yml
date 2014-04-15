@@ -2,7 +2,7 @@
 ##### role defaults redmine_plugins
 # if you want to override these variables, do it in group_vars/all or group_vars/redmine_server
 # variables defined in multiple role defaults should be overridden in group_vars/all (unless you know what you are doing...)
-redmine_dir: "{{ redmine_home }}/redmine" # also defined in defaults for role redmine
+redmine_dir: "/srv/redmine/redmine" # also defined in defaults for role redmine
 server_name: "{{ ansible_fqdn }}" # defaults to fqdn, used by redmine_git_hosting; also defined in role defaults for redmine
 
 
