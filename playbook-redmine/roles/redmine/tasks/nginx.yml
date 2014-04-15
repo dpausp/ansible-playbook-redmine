@@ -27,12 +27,6 @@
   tags:
     - cf
 
-#- name: get installed passenger version
-#  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1 | cut -d ',' -f 1
-#  register: pv_out
-#  tags:
-#    - cf
-
 # register vars which will be used by the nginx (+passenger) installation
 - set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.version }}
   tags:
@@ -86,18 +80,8 @@
   notify: restart supervisor
   sudo_user: root
 
-- name: kill leftover nginx
-  command: killall nginx
-  sudo_user: root
-  ignore_errors: yes
-
-- name: wait 5 seconds ...
-  pause: seconds=5
-
-- name: kill -9 leftover nginx
-  command: killall nginx
-  sudo_user: root
-  ignore_errors: yes
+- name: pause before restarting nginx
+  pause: prompt='Nginx installation finished. Kill other nginx processes running on the same ports now!'
 
 # run pending nginx restart handler
 - meta: flush_handlers
