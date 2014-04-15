@@ -3,8 +3,6 @@
 - name: deploy Redmine
   hosts: redmine_server
   sudo: yes
-  vars_files:
-    - secret_passwords.yml
   roles:
     - redmine
 

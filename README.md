@@ -28,8 +28,9 @@ Playbook Preparation
 
 In the `playbook-redmine` subdirectory:
 
-* copy `secret_passwords.yml.example` to `secret_passwords.yml` and set password. Passwords must be kept secret! 
+* (optional) Create a file named `redmine_db_pass` in the playbook directory. Passwords must be kept secret! 
 The file can be destroyed after a successful installation. Keep the passwords in a safe place!
+If you do not specify a password, it will be generated and written to the file
 * (optional) copy `group_vars/all.example` to `group_vars/all` and customize settings
 
 If the settings in `group_vars/all` are left unchanged, Redmine will be installed with a self signed SSL certificate and default paths under /srv

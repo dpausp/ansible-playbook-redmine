@@ -24,6 +24,10 @@
 
 - name: Install python-psycopg2
   apt: pkg=python-psycopg2 state=present
+ 
+- name: generate DB user password
+  set_fact: redmine_db_pass={{ lookup('password', '../../../redmine_db_pass') }}
+  when: redmine_db_pass is not defined or not redmine_db_pass
 
 - name: Create Redmine DB User
   sudo_user: postgres
