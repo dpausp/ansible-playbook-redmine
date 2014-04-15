@@ -19,14 +19,14 @@ http {
     server {
         # HTTP: just redirect to HTTPS
         listen  {{ http_port }};
-        server_name  {{ ansible_fqdn }};
-        return  301  https://{{ansible_fqdn}}$request_uri;
+        server_name  {{ server_name }};
+        return  301  https://{{ server_name }}$request_uri;
     }
     
     server {
 #BASIC settings
         listen  {{ https_port }};
-        server_name  {{ ansible_fqdn }};
+        server_name  {{ server_name }};
         root  /srv/redmine/redmine/public;
         client_max_body_size  55M;
         keepalive_timeout  65;

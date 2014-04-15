@@ -63,18 +63,18 @@
 
 - name: add http servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb
-    line="      :http_server_domain                => '{{ ansible_fqdn }}',"
+    line="      :http_server_domain                => '{{ server_name }}',"
     regexp="^\s*:http_server_domain"
     state=present
 
 - name: add https servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :https_server_domain               => '{{ ansible_fqdn }}',"
+    line="      :https_server_domain               => '{{ server_name }}',"
     regexp="^\s*:https_server_domain"
 
 - name: add ssh servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :ssh_server_domain                 => '{{ ansible_fqdn }}',"
+    line="      :ssh_server_domain                 => '{{ server_name }}',"
     regexp="^\s*:ssh_server_domain"
 
 - name: fix tmp path in redmine_git_hosting configuration

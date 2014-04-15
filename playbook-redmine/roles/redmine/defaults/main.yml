@@ -12,6 +12,8 @@ ssl_cert_filename: /etc/ssl/certs/ssl-cert-snakeoil.pem # uses self signed debia
 ssl_cert_key_filename: /etc/ssl/private/ssl-cert-snakeoil.key # uses self signed debian cert!
 ssl_old_protocols: "SSLv3" # TLS is always on, leave string empty to use TLS only. SSLv3 may be added.
 always_reinstall_nginx: no # no keeps an existing nginx install
+server_name: "{{ ansible_fqdn }}" # defaults to fqdn, used by nginx; also defined in role defaults for redmine
+
 
 # if you override this variables, do it in group_vars/all
 redmine_db_name: redmine # also defined in role defauls for db
