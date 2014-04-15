@@ -1,6 +1,7 @@
 ---
 ##### role defaults redmine
-# To override settings from here, you can add an entry to group_vars/redmine_server, for example.
+# if you want to override these variables, do it in group_vars/all or group_vars/redmine_server
+# variables defined in multiple role defaults should be overridden in group_vars/all (unless you know what you are doing...)
 user_redmine_pubkeyfile: redmine_key.pub
 redmine_home: /srv/redmine
 redmine_dir: "{{ redmine_home }}/redmine"
