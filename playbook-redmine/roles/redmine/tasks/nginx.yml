@@ -80,8 +80,8 @@
   notify: restart supervisor
   sudo_user: root
 
-- name: pause before restarting nginx
-  pause: prompt='Nginx installation finished. Kill other nginx processes running on the same ports now!'
+#- name: pause before restarting nginx
+#  pause: prompt='Nginx installation finished. Kill other nginx processes running on the same ports now!'
 
 # run pending nginx restart handler
 - meta: flush_handlers
