@@ -7,7 +7,7 @@
   sudo_user: root
 
 - name: clone plugin repository (redmine_dmsf)
-  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }}  version=1.4.8
+  git: repo=https://github.com/danmunn/redmine_dmsf dest={{ pdir }} version=1.4.8 force=yes
   notify: 
    - fix permissions
    - run bundle update
