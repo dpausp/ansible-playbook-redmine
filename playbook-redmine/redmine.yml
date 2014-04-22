@@ -1,7 +1,7 @@
 ---
 
 - name: deploy Redmine
-  hosts: redmine_server
+  hosts: redmine
   sudo: yes
   roles:
     - redmine

@@ -1,8 +1,9 @@
 ---
 ##### role defaults redmine
-# if you want to override these variables, do it in group_vars/all or group_vars/redmine_server
-# variables defined in multiple role defaults should be overridden in group_vars/all (unless you know what you are doing...)
-user_redmine_pubkeyfile: redmine_key.pub
+# if you want to override these variables, do it in group_vars/all or group_vars/redmine
+# variables defined in multiple role defaults (marked with (!)) should be 
+# overridden in group_vars/all (unless you know what you are doing...)
+redmine_adm_pubkeyfile: redmine_key.pub
 redmine_home: /srv/redmine
 redmine_dir: "{{ redmine_home }}/redmine"
 
@@ -11,7 +12,7 @@ http_port: 80
 https_port: 443
 nginx_dir: "{{ redmine_home }}/nginx"
 always_reinstall_nginx: no # no keeps an existing nginx install
-server_name: "{{ ansible_fqdn }}" # defaults to fqdn, used by nginx; also defined in role defaults for redmine
+server_name: "{{ ansible_fqdn }}" # (!) also defined in role defaults for redmine
 
 ### nginx ssl settings
 ssl_create_self_signed_cert: yes # self signed cert and key will be generated if ssl_cert_filename doesn't exist
@@ -23,8 +24,9 @@ ssl_trusted_certificate:
 nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change it to your favorite DNS server
 
 ### redmine db settings
-# if you'd like to override these variables (good idea!), do it in group_vars/all or connecting to the DB will fail
-redmine_db_name: redmine # also defined in role defauls for db
-redmine_db_user: redmine # also defined in role defaults for db
+# if you'd like to override these variables, do it in group_vars/all or connecting to the DB will fail
+redmine_db_name: redmine # (!) also defined in role defauls for db
+redmine_db_user: redmine # (!) also defined in role defaults for db
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

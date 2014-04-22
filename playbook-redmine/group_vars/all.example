@@ -1,34 +1,9 @@
 ---
-##### common vars
+##### vars for common role or vars which are used by multiple roles
+#ntpserver: pool.ntp.org
 #redmine_db_name: redmine
 #redmine_db_user: redmine
 #server_name: "{{ ansible_fqdn }}" 
-
-
-##### gitolite
-#git_home: /srv/git
-#gitolite_dir: "{{ git_home }}/gitolite"
-
-
-##### redmine
-#user_redmine_pubkeyfile: redmine_key.pub
-#redmine_home: /srv/redmine
-#redmine_dir: "{{ redmine_home }}/redmine"
-
-### nginx settings
-#http_port: 80
-#https_port: 443
-#nginx_dir: "{{ redmine_home }}/nginx"
-#always_reinstall_nginx: no # no keeps an existing nginx install
-
-### nginx ssl settings
-#ssl_create_self_signed_cert: yes # self signed cert and key will be generated if ssl_cert_filename doesn't exist
-#ssl_certificate: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.crt"
-#ssl_certificate_key: "{{ nginx_dir }}/conf/ssl-redmine_self-signed.key"
-#ssl_local_dhparam_file: # dhparam file will be generated on target host if nothing is given here
-##ssl_trusted_certificate is used for OCSP stapling and contains the intermediate CA certificates + root CA
-#ssl_trusted_certificate:
-#nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change it to your favorite DNS server
 
 
 ## vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

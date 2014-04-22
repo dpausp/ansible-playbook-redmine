@@ -1,6 +1,6 @@
 ---
 ##### role defaults redmine_plugins
-# if you want to override these variables, do it in group_vars/all or group_vars/redmine_server
+# if you want to override these variables, do it in group_vars/all or group_vars/redmine
 # variables defined in multiple role defaults (marked with (!)) should be overridden in group_vars/all (unless you know what you are doing...)
 redmine_home: /srv/redmine # (!) also defined in defaults for role redmine
 redmine_dir: "{{ redmine_home }}/redmine" # (!) also defined in defaults for role redmine

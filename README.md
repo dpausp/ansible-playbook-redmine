@@ -31,10 +31,11 @@ In the `playbook-redmine` subdirectory:
 * (optional) Create a file named `redmine_db_pass` in the playbook directory. Passwords must be kept secret! 
 The file can be destroyed after a successful installation. Keep the passwords in a safe place!
 If you do not specify a password, it will be generated and written to the file
-* (optional) copy `group_vars/all.example` to `group_vars/all` and customize settings
+* (optional) copy `group_vars/{role}.example` to `group_vars/{role}` and customize settings
 
-If the settings in `group_vars/all` are left unchanged, Redmine will be installed with a self signed SSL certificate and default paths under /srv
-
+If the settings are left unchanged, Redmine will be installed with a self signed SSL certificate, english locale and default paths under /srv. 
+The server process is run by user `redmine` and `redmine_adm` is created as administrative account. 
+You can log in as `redmine_adm` if you specify an existing SSH pubkey file with `redmine_adm_pubkeyfile` (in `group_vars/redmine`).
 
   
 Universal Vagrant VM Installation (A)

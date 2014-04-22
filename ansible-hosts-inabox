@@ -1,9 +1,9 @@
-[redmine_server]
+[redmine]
 inabox
 
 [db]
 inabox
 
-[git_server]
+[gitolite]
 inabox
 
