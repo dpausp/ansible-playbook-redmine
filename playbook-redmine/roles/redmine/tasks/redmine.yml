@@ -62,7 +62,7 @@
 
 - name: load default data
   command: chdir={{ redmine_dir }} 
-    rake redmine:load_default_data REDMINE_LANG=de RAILS_ENV=production
+    rake redmine:load_default_data REDMINE_LANG={{ redmine_lang }} RAILS_ENV=production
   notify:
     - restart redmine
 

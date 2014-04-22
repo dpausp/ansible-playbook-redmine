@@ -6,6 +6,7 @@
 redmine_adm_pubkeyfile: redmine_key.pub
 redmine_home: /srv/redmine
 redmine_dir: "{{ redmine_home }}/redmine"
+redmine_lang: en # used for load_default_data
 
 ### nginx settings
 http_port: 80
