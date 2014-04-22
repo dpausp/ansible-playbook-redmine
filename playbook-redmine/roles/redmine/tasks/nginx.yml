@@ -38,13 +38,14 @@
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
   when: not always_reinstall_nginx
+  register: nginx_installed
   notify: restart nginx
 
 - name: (re-)install nginx
   shell: 
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
-  when: always_reinstall_nginx or pv_out|changed
+  when: always_reinstall_nginx or (pv_out|changed and not nginx_installed|changed)
   notify: restart nginx
 
 - name: copy dhparam file
