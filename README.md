@@ -14,6 +14,13 @@ Three installation methods are available:
 
 * (C) uses Ansible on your local machine to install Redmine on a remote host via SSH (purpose: production or testing) 
 
+TL;DR
+-----
+
+Install Redmine VM ([Vagrant 1.5](http://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) must be installed) with:
+
+    git clone https://github.com/mediatum/ansible-playbook-redmine && cd ansible-playbook-redmine && vagrant up inabox
+
 Playbook Structure
 ------------------
 
