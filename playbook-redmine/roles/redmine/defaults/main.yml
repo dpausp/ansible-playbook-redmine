@@ -29,5 +29,11 @@ nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change 
 redmine_db_name: redmine # (!) also defined in role defauls for db
 redmine_db_user: redmine # (!) also defined in role defaults for db
 
+### nullmailer settings
+install_nullmailer: no
+nullmailer_remote:
+nullmailer_options: --starttls
+nullmailer_protocol: smtp
+nullmailer_admin_email:
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

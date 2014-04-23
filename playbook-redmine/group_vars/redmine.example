@@ -20,5 +20,12 @@
 #ssl_trusted_certificate:
 #nginx_dns_resolver: "208.67.222.222 8.8.8.8" # needed for OCSP stapling, change it to your favorite DNS server
 
+### nullmailer settings
+#install_nullmailer: no
+#nullmailer_remote:
+#nullmailer_options: --starttls
+#nullmailer_protocol: smtp
+#nullmailer_admin_email:
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

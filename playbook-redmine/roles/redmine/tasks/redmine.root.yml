@@ -40,4 +40,17 @@
 - name: set permissions for restart file
   file: path={{redmine_dir}}/tmp/restart.txt owner=redmine_adm group=redmine mode=660 state=file
 
+- name: install nullmailer
+  apt: pkg=nullmailer state=present
+  when: install_nullmailer
+
+- name: setup nullmailer config files
+  template: src=nullmailer_{{ item }}.j2 dest=/etc/nullmailer/{{ item }}
+  when: install_nullmailer
+  with_items:
+    - me
+    - remotes
+    - adminaddr
+
+
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

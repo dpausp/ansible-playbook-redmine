@@ -1,7 +1,8 @@
 Redmine Installation Playbook
 =============================
 
-[Ansible](http://ansible.com) Playbook + Vagrantfile for installing [Redmine](http://www.redmine.org) with local PostgreSQL database and many plugins (including git\_hosting and dmsf). Three installation methods are available:
+[Ansible](http://ansible.com) Playbook + Vagrantfile for installing [Redmine](http://www.redmine.org) with local PostgreSQL database, Gitolite and many plugins (including git\_hosting, CRM, checklist and dmsf). 
+Three installation methods are available:
 
 * (A) universal [Vagrant](http://www.vagrantup.com) installer (recommended for first tests)
 * (B) Vagrant with local Ansible
@@ -36,6 +37,8 @@ If you do not specify a password, it will be generated and written to the file
 If the settings are left unchanged, Redmine will be installed with a self signed SSL certificate, english locale and default paths under /srv. 
 The server process is run by user `redmine` and `redmine_adm` is created as administrative account. 
 You can log in as `redmine_adm` if you specify an existing SSH pubkey file with `redmine_adm_pubkeyfile` (in `group_vars/redmine`).
+
+See [Customizing]("#customizing") for details.
 
   
 Universal Vagrant VM Installation (A)
@@ -149,7 +152,7 @@ You can use the helper playbook access.yml to create such an user with proper SS
 
 
 ### Running The Playbook
-If the remote admin user has the same name as your current local user and must use sudo, run:
+If the remote admin user has the same name as your current local user and must use sudo, run from the `playbook-redmine` dir:
 
     ansible-playbook -i hosts site.yml -K
 
@@ -163,3 +166,77 @@ You must have "-i" in your Ansible sudo\_flags (in ansible.cfg). If not, use som
     ANSIBLE_SUDO_FLAGS="-i" ansible-playbook -i hosts all site.yml -K
 
 After installation is completed, Redmine is running on Port 3000 (HTTPS only). You can login with _admin_ as username and _admin_ as password.
+
+
+Customizing
+------------
+
+*this section can be ignored for a simple test installation*
+
+Many settings can be changed by placing a custom vars file for each role in `group_vars`. 
+Example files with default settings are included (`group_vars/{role}.example`).
+
+Some facts about the installation in with default settings:
+
+Redmine
+
+* installed under `/srv/redmine/redmine`
+* mail config uses sendmail binary installed on target host
+* default data is loaded for English locale
+
+Security
+
+* SSL only on port 443
+* port 80 redirected to HTTPS
+* generated self-signed SSL certificate and 2048bit DH param
+* no SSL 3, no MD5, no RC4, TLS 1+ only
+
+Server/Ruby 
+
+* most current version supported by Redmine and all plugins (2.1.0)
+* served by Passenger integrated in Nginx
+* installed with RVM for user `redmine_adm`
+* Nginx managed by supervisor
+
+
+### Mail Configuration
+
+If you want a simple mail configuration which relays mails to another SMTP host (auth can be configured), this playbook can install nullmailer for you.
+
+Example for a mail relay which supports STARTTLS, settings in `group_vars/redmine`:
+
+    install_nullmailer: yes
+    nullmailer_host: mail.example.com
+    nullmailer_options: --starttls
+    nullmailer_protocol: smtp
+    nullmailer_admin_email: admin@example.com
+
+For details, see 
+* http://metz.gehn.net/2012/11/nullmailer-with-starttls/ 
+* http://untroubled.org/nullmailer/HOWTO
+
+If you need a more complex configuration, visit the [Redmine Wiki](http://www.redmine.org/projects/redmine/wiki/EmailConfiguration) and edit `playbook-redmine/roles/redmine/templates/config_production.yml`
+
+
+### SSL Configuration
+
+See settings in `group_vars/redmine`. 
+
+You should at least change the certificate settings and install a certificate signed by a trusted CA on the host before installing Redmine.
+
+### Redmine Plugins
+
+For a list of installed plugins, see `playbook-redmine/roles/redmine_plugins/tasks/mail.yml`. 
+You can skip plugins by simply commenting them out or using Ansible options for this:
+
+    ansible-playbook --skip-tags=redmine_dmsf,redmine_etherpad site.yml
+
+To install only one plugin and nothing else (maybe you excluded it earlier and want to install it now):
+
+    ansible-playbook --tags=redmine_dmsf redmine_plugins.yml
+
+### Install without Git support
+
+Run ansible with:
+
+    ansible-playbook --skip-tags=gitolite,redmine_git_hosting site.yml
