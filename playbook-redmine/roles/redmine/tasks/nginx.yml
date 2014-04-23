@@ -68,10 +68,6 @@
     -keyout {{ ssl_certificate_key }} -out {{ ssl_certificate }}"
   when: ssl_create_self_signed_cert
 
-- name: setup nginx configuration file
-  template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
-  notify: restart nginx
-
 - name: add redmine admin to supervisor group
   user: name=redmine_adm groups=supervisor state=present append=true
   sudo_user: root

@@ -2,8 +2,5 @@ redmine_key.pub
 gitolite_admin_key
 gitolite_admin_key.pub
 redmine_db_pass
-hosts
 ansible.sqlite
-playbook_redmine/group_vars/*
 .vagrant
-config_env_*.yml.j2
