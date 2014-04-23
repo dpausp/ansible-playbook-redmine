@@ -19,7 +19,7 @@ TL;DR
 
 Install Redmine VM ([Vagrant 1.5](http://www.vagrantup.com) and [VirtualBox](https://www.virtualbox.org/) must be installed) with:
 
-    git clone https://github.com/mediatum/ansible-playbook-redmine && cd ansible-playbook-redmine && vagrant up inabox
+    git clone https://github.com/dpausp/ansible-playbook-redmine && cd ansible-playbook-redmine && vagrant up inabox
 
 Playbook Structure
 ------------------
