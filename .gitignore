@@ -1,8 +1,6 @@
 redmine_key.pub
 gitolite_admin_key
 gitolite_admin_key.pub
-secret_passwords.yml
-hosts
+redmine_db_pass
 ansible.sqlite
-playbook_redmine/group_vars/*
 .vagrant

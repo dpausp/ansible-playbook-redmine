@@ -1,10 +1,10 @@
 ---
 # This playbook deploys the whole application stack in this site.  
 
-- include: common.yml
+- include: common.yml tags=common
 - include: database.yml tags=database
+- include: redmine.yml tags=redmine
 - include: gitolite.yml tags=gitolite
-- include: redmine.yml
 - include: redmine_plugins.yml tags=redmine_plugins
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

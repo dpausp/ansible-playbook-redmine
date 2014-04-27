@@ -1,0 +1,4 @@
+##### gitolite
+#git_home: /srv/git
+#gitolite_dir: "{{ git_home }}/gitolite"
+

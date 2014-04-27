@@ -1,5 +1,5 @@
 ---
-# install gitolite (tasks executed as sudo git)
+# install gitolite (most tasks executed as sudo git, one as sudo root)
 
 - name: sudo test
   shell: echo $HOME
@@ -30,5 +30,20 @@
   line='BEGIN { exit 0 if exists $ENV{GL_BYPASS_UPDATE_HOOK}; }'"
   tags:
     - hookfix
+
+### redmine_git_hosting specific stuff
+
+- name: install ruby for redmine_git_hosting hook
+  apt: pkg=ruby state=present
+  sudo_user: root
+
+- name: allow config options for redmine_git_hosting hooks
+  lineinfile: name={{ git_home }}/.gitolite.rc state=present
+    regexp="GIT_CONFIG_KEYS"
+    line="    GIT_CONFIG_KEYS                 =>  '.*',"
+
+- name: copy patched post-receive hook for redmine_git_hosting
+  template: src=post-receive.j2 dest={{ git_home }}/.gitolite/hooks/common/post-receive
+
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

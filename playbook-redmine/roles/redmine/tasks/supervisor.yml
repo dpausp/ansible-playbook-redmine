@@ -1,0 +1,18 @@
+---
+- name: install supervisor
+  apt: pkg=supervisor state=present
+
+- name: create supervisor group
+  group: name=supervisor state=present
+
+- name: create supervisor config file
+  template: src=supervisord.conf.j2 dest=/etc/supervisor/supervisord.conf
+  notify: restart supervisor
+
+- name: start supervisor service
+  service: name=supervisor state=started
+
+- name: start supervisor on boot
+  service: name=supervisor enabled=yes
+
+# vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

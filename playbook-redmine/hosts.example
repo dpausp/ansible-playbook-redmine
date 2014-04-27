@@ -2,8 +2,8 @@
 [db]
 someserver 
 
-[redmine_server]
+[redmine]
 someserver
 
-[git_server]
+[gitolite]
 someserver

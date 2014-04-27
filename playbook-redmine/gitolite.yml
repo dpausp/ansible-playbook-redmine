@@ -1,6 +1,6 @@
 ---
 - name: deploy gitolite
-  hosts: git_server
+  hosts: gitolite
   sudo: yes
   roles:
     - gitolite

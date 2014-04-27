@@ -2,6 +2,7 @@
 worker_processes  {{ ansible_processor_cores }};
 error_log  logs/error.log warn;
 pid  logs/nginx.pid;
+daemon off;
 
 
 events {
@@ -18,19 +19,18 @@ http {
     server {
         # HTTP: just redirect to HTTPS
         listen  {{ http_port }};
-        server_name  {{ ansible_fqdn }};
-        return  301  https://{{ansible_fqdn}}$request_uri;
+        server_name  {{ server_name }};
+        return  301  https://{{ server_name }}$request_uri;
     }
     
     server {
 #BASIC settings
         listen  {{ https_port }};
-        server_name  {{ ansible_fqdn }};
+        server_name  {{ server_name }};
         root  /srv/redmine/redmine/public;
         client_max_body_size  55M;
         keepalive_timeout  65;
         sendfile  on;
-        gzip  off;
 
 #PASSENGER settings
         passenger_enabled  on;
@@ -40,13 +40,14 @@ http {
 
 #SSL configuration
         ssl  on;
-        ssl_certificate  {{ssl_cert_filename}};
-        ssl_certificate_key  {{ssl_cert_key_filename}};
-        ssl_session_cache  shared:SSL:10m;
-        ssl_session_timeout  10m;
-        ssl_protocols  {{ ssl_old_protocols }} TLSv1 TLSv1.1 TLSv1.2;
-        ssl_ciphers  HIGH:!aNULL:!MD5;
-        ssl_prefer_server_ciphers  on;
+        include  ssl_params;
+        ssl_certificate  {{ ssl_certificate }};
+        ssl_certificate_key  {{ ssl_certificate_key }};
+        resolver {{ nginx_dns_resolver }};
+{% if ssl_trusted_certificate is defined and ssl_trusted_certificate %}
+        #ssl_trusted_certificate is used for OCSP stapling and contains the intermediate CA certificates + root CA
+        ssl_trusted_certificate  {{ ssl_trusted_certificate }};
+{% endif %}
 
 #REDMINE_PLUGINS: additional settings for redmine plugins
 

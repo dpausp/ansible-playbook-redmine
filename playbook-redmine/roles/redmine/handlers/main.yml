@@ -2,12 +2,14 @@
 # Handler for the redmine server: handlers are called by other plays.
 
 - name: restart nginx
-  sudo: yes
-  sudo_user: root
-  service: name=nginx state=restarted
+  sudo_user: redmine_adm
+  supervisorctl: name=redmine-nginx state=restarted
 
 - name: restart redmine
   command: touch /srv/redmine/redmine/tmp/restart.txt
+
+- name: restart supervisor
+  service: name=supervisor state=restarted
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

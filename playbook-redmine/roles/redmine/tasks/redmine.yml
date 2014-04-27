@@ -7,16 +7,40 @@
   notify:
     - restart redmine
 
-- name: remove testing gems from Gemfile (problems with plugins)
-  lineinfile: dest={{ redmine_dir }}/Gemfile state=absent regexp='{{ item }}'
-  with_items:
-    - '^\s*gem .mocha.'
-    - '^\s*gem .nokogiri.'
-    - '^\s*gem .shoulda-matchers.'
-    - '^\s*gem .capybara.'
-    - '^\s*gem .selenium-webdriver.'
-  tags:
-    - testing
+- name: check if a production config template is provided
+  local_action: stat path=roles/redmine/templates/config_production.yml.j2
+  sudo: no
+  register: config_production
+  tags: 
+    - redmine_configuration
+
+- name: create configuration.yml.d directory
+  file: path={{ redmine_dir }}/config/configuration.yml.d state=directory
+  when: config_production.stat.exists
+  tags: 
+    - redmine_configuration
+
+- name: create configuration.yml header
+  template: src=config_header.yml.j2 dest={{ redmine_dir }}/config/configuration.yml.d/config_header.yml
+  when: config_production.stat.exists
+  tags: 
+    - redmine_configuration
+
+- name: create configuration_production file
+  template: src=config_production.yml.j2 dest={{ redmine_dir }}/config/configuration.yml.d/config_production.yml
+  when: config_production.stat.exists
+  tags: 
+    - redmine_configuration
+
+- name: assemble configuration.yml
+  assemble: remote_src=yes mode=0640
+    src={{ redmine_dir }}/config/configuration.yml.d/
+    dest={{ redmine_dir }}/config/configuration.yml
+  when: config_production.stat.exists
+  notify: 
+    - restart redmine
+  tags: 
+    - redmine_configuration
 
 - name: run redmine bundle update
   command: chdir={{ redmine_dir }} bundle update
@@ -38,7 +62,7 @@
 
 - name: load default data
   command: chdir={{ redmine_dir }} 
-    rake redmine:load_default_data REDMINE_LANG=de RAILS_ENV=production
+    rake redmine:load_default_data REDMINE_LANG={{ redmine_lang }} RAILS_ENV=production
   notify:
     - restart redmine
 

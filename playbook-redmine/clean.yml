@@ -2,7 +2,7 @@
 #remove redmine and gitolite from target host
 
 - name: remove redmine
-  hosts: redmine_server
+  hosts: redmine
   user: root
   vars_files:
     - roles/redmine/defaults/main.yml
@@ -46,7 +46,7 @@
 
 
 - name: remove gitolite
-  hosts: redmine_server
+  hosts: redmine
   user: root
   vars_files:
     - roles/gitolite/defaults/main.yml
@@ -96,7 +96,7 @@
       service: name=postgresql state=reloaded
 
 - name: remove plugin specific stuff that is left
-  hosts: redmine_server
+  hosts: redmine
   user: root
   vars_files:
     - roles/redmine/defaults/main.yml

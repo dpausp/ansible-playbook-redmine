@@ -1,4 +1,6 @@
 ---
+##### role defaults gitolite
+# if you want to override these variables, do it in group_vars/all or group_vars/gitolite
 git_home: /srv/git
 gitolite_dir: "{{ git_home }}/gitolite"
 

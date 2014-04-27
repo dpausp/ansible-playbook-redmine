@@ -27,12 +27,7 @@
   tags:
     - cf
 
-#- name: get installed passenger version
-#  shell: gem list -l passenger | tail -n1 | cut -d "(" -f 2 | cut -d ")" -f 1 | cut -d ',' -f 1
-#  register: pv_out
-#  tags:
-#    - cf
-
+# register vars which will be used by the nginx (+passenger) installation
 - set_fact: ruby_current={{ rvm_current_out.stdout }} passenger_version={{ pv_out.version }}
   tags:
     - cf
@@ -43,36 +38,49 @@
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
   when: not always_reinstall_nginx
+  register: nginx_installed
+  notify: restart nginx
 
 - name: (re-)install nginx
   shell: 
     ~/.rvm/gems/{{ ruby_current }}/bin/passenger-install-nginx-module
     --auto-download --prefix={{ nginx_dir }} --auto
-  when: always_reinstall_nginx
+  when: always_reinstall_nginx or (pv_out|changed and not nginx_installed|changed)
+  notify: restart nginx
 
-- name: setup nginx configuration file
-  template: src=nginx.conf.j2 dest={{ nginx_dir }}/conf/nginx.conf
+- name: copy dhparam file
+  copy: src={{ ssl_dhparam_file }} dest={{ nginx_dir }}/conf/dhparam
+  when: ssl_local_dhparam_file
 
-- name: create nginx init script
-  template: src=nginx.j2 dest=/etc/init.d/nginx owner=root group=root mode=0755
+- name: create dhparam
+  command: creates={{ nginx_dir }}/conf/dhparam
+    openssl dhparam -out {{ nginx_dir }}/conf/dhparam 2048
+
+- name: setup nginx configuration files
+  template: src={{ item }}.j2 dest={{ nginx_dir }}/conf/{{ item }}
+  with_items: 
+    - nginx.conf
+    - ssl_params
+  notify: restart nginx
+
+- name: generate self signed certificate
+  command: "creates={{ ssl_certificate }} openssl req -x509 -nodes -days 365 -subj /CN={{ server_name }} -newkey rsa:2048 \ 
+    -keyout {{ ssl_certificate_key }} -out {{ ssl_certificate }}"
+  when: ssl_create_self_signed_cert
+
+- name: add redmine admin to supervisor group
+  user: name=redmine_adm groups=supervisor state=present append=true
   sudo_user: root
 
-- name: run nginx on boot
-  service: name=nginx enabled=yes
+- name: create supervisor redmine-nginx process config file
+  template: src=redmine-nginx.conf.j2 dest=/etc/supervisor/conf.d/redmine-nginx.conf
+  notify: restart supervisor
   sudo_user: root
 
-- name: stop nginx if running
-  service: name=nginx state=stopped
-  sudo_user: root
-  ignore_errors: yes
+#- name: pause before restarting nginx
+#  pause: prompt='Nginx installation finished. Kill other nginx processes running on the same ports now!'
 
-- name: kill leftover nginx
-  command: killall -9 nginx
-  sudo_user: root
-  ignore_errors: yes
-
-- name: start nginx
-  service: name=nginx state=started
-  sudo_user: root
+# run pending nginx restart handler
+- meta: flush_handlers
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

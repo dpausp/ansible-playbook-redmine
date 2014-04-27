@@ -1,6 +1,10 @@
 ---
-# if you want to override that, do it in group_vars/redmine_server
-redmine_dir: /srv/redmine/redmine # also defined in defaults for role redmine
+##### role defaults redmine_plugins
+# if you want to override these variables, do it in group_vars/all or group_vars/redmine
+# variables defined in multiple role defaults (marked with (!)) should be overridden in group_vars/all (unless you know what you are doing...)
+redmine_home: /srv/redmine # (!) also defined in defaults for role redmine
+redmine_dir: "{{ redmine_home }}/redmine" # (!) also defined in defaults for role redmine
+server_name: "{{ ansible_fqdn }}" # (!) defaults to fqdn, used by redmine_git_hosting; also defined in role defaults for redmine
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

@@ -1,15 +1,9 @@
 ---
 # install redmine_git_hosting plugin
 
-- include: redmine_plugin_views_revisions.yml
-
 - name: set plugin dir (redmine_git_hosting)
   set_fact: pdir={{ redmine_dir }}/plugins/redmine_git_hosting
   tags: dir
-
-- name: install system ruby for redmine_git_hosting plugin hook
-  apt: pkg=ruby state=present
-  sudo_user: root
 
 - name: install libicu-dev
   apt: pkg=libicu-dev state=present
@@ -34,20 +28,15 @@
   sudo_user: root
 
 - name: copy over public key for gitolite administration
-  copy: src=gitolite_admin_key.pub dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine
+  copy: src=gitolite_admin_key.pub dest={{ redmine_home }}/.ssh/redmine_gitolite_admin_id_rsa.pub owner=redmine group=redmine
   sudo_user: root
 
 - name: copy over private key for gitolite administration
-  copy: src=gitolite_admin_key dest=/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine
+  copy: src=gitolite_admin_key dest={{ redmine_home }}/.ssh/redmine_gitolite_admin_id_rsa mode=0600 owner=redmine group=redmine
   sudo_user: root
-
-- name: copy post-receive hook
-  sudo_user: root
-  copy: src=post-receive dest=/srv/git/.gitolite/hooks/common/post-receive owner=git group=git
 
 - name: clone plugin repository
-  #git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=54d9fd6384f839db2df dest={{ pdir }}
-  git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=v0.6 dest={{ pdir }}
+  git: repo=https://github.com/jbox-web/redmine_git_hosting.git version=v0.7.2 dest={{ pdir }} force=yes
   #sudo_user: root
   notify:
     - fix permissions
@@ -63,28 +52,28 @@
 
 - name: add http servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb
-    line="      :http_server_domain                => '{{ ansible_fqdn }}',"
+    line="      :http_server_domain                => '{{ server_name }}',"
     regexp="^\s*:http_server_domain"
     state=present
 
 - name: add https servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :https_server_domain               => '{{ ansible_fqdn }}',"
+    line="      :https_server_domain               => '{{ server_name }}',"
     regexp="^\s*:https_server_domain"
 
 - name: add ssh servername to redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :ssh_server_domain                 => '{{ ansible_fqdn }}',"
+    line="      :ssh_server_domain                 => '{{ server_name }}',"
     regexp="^\s*:ssh_server_domain"
 
 - name: fix tmp path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :gitolite_temp_dir                     => '/srv/redmine/tmp/redmine_git_hosting/',"
+    line="      :gitolite_temp_dir                     => '{{ redmine_home }}/tmp/redmine_git_hosting/',"
     regexp="^\s*:gitolite_temp_dir"
 
 - name: fix key pubkey path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :gitolite_ssh_private_key      => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa',"
+    line="      :gitolite_ssh_private_key      => '{{ redmine_home }}/.ssh/redmine_gitolite_admin_id_rsa',"
     regexp="^\s*:gitolite_ssh_private_key"
 
 - name: don't kill our custom hook when plugin configuration is changed
@@ -94,7 +83,7 @@
 
 - name: fix gitolite pubkey path in redmine_git_hosting configuration
   lineinfile: dest={{ pdir }}/init.rb state=present
-    line="      :gitolite_ssh_public_key       => '/srv/redmine/.ssh/redmine_gitolite_admin_id_rsa.pub',"
+    line="      :gitolite_ssh_public_key       => '{{ redmine_home }}/.ssh/redmine_gitolite_admin_id_rsa.pub',"
     regexp="^\s*:gitolite_ssh_public_key"
   notify: 
     - run bundle update
@@ -127,10 +116,7 @@
 
 - name: create tmp dir for plugin
   sudo_user: root
-  file: dest=/srv/redmine/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
-
-- name: process version change
-  command: chdir={{ redmine_dir }} rake redmine:plugins:process_version_change RAILS_ENV=production
+  file: dest={{ redmine_home }}/tmp/redmine_git_hosting state=directory owner=redmine recurse=yes group=redmine mode=2770
 
 
 # vim: set filetype=yaml sw=2 ts=2 sts=2 expandtab:

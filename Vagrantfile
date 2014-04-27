@@ -25,6 +25,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.network :forwarded_port, guest: 443, host: 3000
 
+  config.vm.hostname = "testredmine"
+
   # fix DNS problem with nginx install
   # DNS is too slow and nginx install aborts after 5 sec
   # => https://github.com/mitchellh/vagrant/issues/1172
@@ -47,8 +49,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.playbook = "playbook-redmine/site.yml"
       ansible.groups = {
         "db" => ["ext"],
-        "redmine_server" => ["ext"],
-        "git_server" => ["ext"]
+        "redmine" => ["ext"],
+        "gitolite" => ["ext"]
       }
       ansible.verbose = ENV["VA_VERBOSE"]
       ansible.raw_arguments = ENV["VA_ARGS"]

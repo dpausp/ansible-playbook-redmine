@@ -1,5 +1,5 @@
 ---
-# defaults for the DB role
+##### role defaults db
 # if you want to override this variables, do it in group_vars/all
 redmine_db_name: redmine # also defined in role defauls for redmine
 redmine_db_user: redmine # also defined in role defaults for redmine
